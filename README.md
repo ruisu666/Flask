@@ -1,5 +1,5 @@
 # Flask
 Before running:
     pip install flask
-    pip install-wtf
+    pip install flask-wtf
     pip install email_validator
