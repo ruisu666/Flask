@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="content-section">
-        <form method="POST" action="" novalidate>
+        <form method="POST" action="{{ url_for('login') }}" novalidate>
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Log In</legend>
@@ -46,7 +46,7 @@
     </div>
     <div class="border-top pt-3">
         <small class="text-muted">
-            Need an account? <a class="ml-2" href="{{ url_for('register') }}">Sign In</a>
+            Need an account? <a class="ml-2" href="{{ url_for('register') }}">Sign Up</a>
         </small>
     </div>
 {% endblock content%}

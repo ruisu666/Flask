@@ -1,20 +1,20 @@
-from flask import Flask, render_template, url_for, flash, redirect
+from flask import Flask, render_template, url_for, flash, redirect, request
 from forms import RegistrationForm, LoginForm
-app = Flask(__name__)
 
+app = Flask(__name__)
 app.config['SECRET_KEY'] = '4b7ff6485081b4fbcd8739a588ccd736'
 
 posts = [
     {
-        'author':"Luis",
-        'title':'Book',
+        'author': "Luis",
+        'title': 'Book',
         'content': 'dog',
         'date_posted': 'May 16, 2019'
     },
     {
-        'author':"Redditor",
-        'title':'TL;DR',
-        'content': 'Touch some grass bitch',
+        'author': "Redditor",
+        'title': 'TL;DR',
+        'content': 'Touch some grass, bitch',
         'date_posted': 'May 16, 2019'
     }
 ]
@@ -40,13 +40,13 @@ def register():
 def login():
     form = LoginForm()
 
-    if form.validate_on_submit():
+    if request.method == 'POST':
         print("Form submitted")
         print("Email:", form.email.data)
         print("Password:", form.password.data)
 
         hardcoded_email = 'admin@blog.com'
-        hardcoded_password = 'password'
+        hardcoded_password = '123'
 
         if form.email.data == hardcoded_email and form.password.data == hardcoded_password:
             flash('Login successful!', 'success')
@@ -55,7 +55,6 @@ def login():
             flash('Login unsuccessful. Please check email and password', 'danger')
 
     return render_template('login.html', form=form)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
