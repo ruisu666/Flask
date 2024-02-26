@@ -1,60 +1,13 @@
-from flask import Flask, render_template, url_for, flash, redirect, request
-from forms import RegistrationForm, LoginForm
+from flask import Flask
+from app.auth import auth_bp
+from app.routes import routes_bp
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '4b7ff6485081b4fbcd8739a588ccd736'
 
-posts = [
-    {
-        'author': "Luis",
-        'title': 'Book',
-        'content': 'dog',
-        'date_posted': 'May 16, 2019'
-    },
-    {
-        'author': "Redditor",
-        'title': 'TL;DR',
-        'content': 'Touch some grass, bitch',
-        'date_posted': 'May 16, 2019'
-    }
-]
+app.config['SECRET_KEY'] = '3f664e5dcb9bcab8fbe6623969b6cf71383a9cbc21e40ef2019fb38952702d7b'
 
-@app.route("/")
-@app.route("/home")
-def home():
-    return render_template('home.html', posts=posts)
+app.register_blueprint(auth_bp)
+app.register_blueprint(routes_bp)
 
-@app.route("/about")
-def about():
-    return render_template('about.html')
-
-@app.route("/register", methods=['GET', 'POST'])
-def register():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!', 'success')
-        return redirect(url_for('home'))
-    return render_template('register.html', form=form)
-
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-
-    if request.method == 'POST':
-        print("Form submitted")
-        print("Email:", form.email.data)
-        print("Password:", form.password.data)
-
-        hardcoded_email = 'admin@blog.com'
-        hardcoded_password = '123'
-
-        if form.email.data == hardcoded_email and form.password.data == hardcoded_password:
-            flash('Login successful!', 'success')
-            return redirect(url_for('home'))
-        else:
-            flash('Login unsuccessful. Please check email and password', 'danger')
-
-    return render_template('login.html', form=form)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
