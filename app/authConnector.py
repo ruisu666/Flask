@@ -3,6 +3,10 @@ from app.forms import LoginForm, RegistrationForm
 
 auth_bp = Blueprint('auth', __name__)
 
+@auth_bp.route('/')
+def index():
+    return redirect(url_for('auth.login'))
+
 @auth_bp.route('/login', methods = ['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -12,12 +16,12 @@ def login():
         print("Email:", form.email.data)
         print("Password:", form.password.data)
 
-        hardcoded_email = 'admin@blog.com'
+        hardcoded_email = 'sangoku'
         hardcoded_password = '123'
 
         if form.email.data == hardcoded_email and form.password.data == hardcoded_password:
             flash('Login successful!', 'success')
-            return redirect(url_for('routes.home'))
+            return redirect(url_for('dashboard.dashboard'))
         else:
             flash('Login unsuccessful. Please check email and password', 'danger')
 
