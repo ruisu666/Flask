@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm 
+from app.utils import execute_query
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -7,27 +8,27 @@ auth_bp = Blueprint('auth', __name__)
 def index():
     return redirect(url_for('auth.login'))
 
-@auth_bp.route('/login', methods = ['GET', 'POST'])
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
 
-    if request.method == 'POST':
-        print("Form submitted")
-        print("Email:", form.email.data)
-        print("Password:", form.password.data)
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
 
-        hardcoded_email = 'sangoku'
-        hardcoded_password = '123'
+        # Execute query to check username and password
+        query = "SELECT * FROM tbladmin WHERE username = %s AND password = %s"
+        result = execute_query(query, (username, password), fetchone=True)
 
-        if form.email.data == hardcoded_email and form.password.data == hardcoded_password:
+        if result:
             flash('Login successful!', 'success')
             return redirect(url_for('dashboard.dashboard'))
         else:
-            flash('Login unsuccessful. Please check email and password', 'danger')
-
+            flash('Login unsuccessful. Please check username and password', 'danger')
+    
     return render_template('login.html', form=form)
 
-@auth_bp.route('/register', methods = ['GET', 'POST'])
+
+@auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegistrationForm()
-    return render_template('register.html', form=form)
+    return render_template('register.html')
