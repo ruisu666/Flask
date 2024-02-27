@@ -7,4 +7,5 @@ Before running:
     
     pip install email_validator
 
-    pip install flask-mysqldb
+    pip install mysql-connector-python
+
