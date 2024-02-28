@@ -16,7 +16,6 @@ def login():
         username = form.username.data
         password = form.password.data
 
-        # Execute query to check username and password
         query = "SELECT * FROM tbladmin WHERE username = %s AND password = %s"
         result = execute_query(query, (username, password), fetchone=True)
 

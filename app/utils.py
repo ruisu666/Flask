@@ -1,20 +1,13 @@
 import mysql.connector
 
-# Connection details
-DB_HOST = 'localhost'
-DB_USER = 'root'
-DB_PASSWORD = ''
-DB_NAME = 'vmsdb'
-DB_PORT = 3306
-
 def get_db_connection():
     try:
         connection = mysql.connector.connect(
-            host=DB_HOST,
-            port=DB_PORT,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            database=DB_NAME
+            host='localhost',
+            port='3306',
+            user='root',
+            password='',
+            database='vmsdb'
         )
         return connection
     except mysql.connector.Error as err:
