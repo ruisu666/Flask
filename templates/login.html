@@ -1,51 +1,65 @@
-{% extends "layout.html" %}
-
-{% block content %}
-<div class="content-section"></br>
-    <img src="{{ url_for('static', filename='images/neust_logo.png') }}" alt="NEUST Logo" class="img-fluid mb-4" style="width: 250px; height: auto; display: block; margin-left: auto; margin-right: auto;">
-    <p style="text-align: center; font-size: 24px; font-weight: bold;">Vehicle Management System</p> 
-    <p style="text-align: center; font-size: 24px; font-weight: 0;">Login</p>
-        <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4" style="text-align: center;"></legend>
-                <div class="form-group">
-                    {{ form.username.label(class="form-control-label") }}
-                    {% if form.username.errors %}
-                        {{ form.username(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.username.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
+<html>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='main.css') }}">
+        <title>Flask Testing</title>
+    </head>
+    <body>
+        <div class="row justify-content-center">
+            <div class="content-section"></br>
+                <img src="{{ url_for('static', filename='images/neust_logo.png') }}" alt="NEUST Logo" class="img-fluid mb-4" style="width: 250px; height: auto; display: block; margin-left: auto; margin-right: auto;">
+                <p style="text-align: center; font-size: 24px; font-weight: bold;">Vehicle Management System</p> 
+                <p style="text-align: center; font-size: 24px; font-weight: 0;">Login</p>
+                    <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
+                        {{ form.hidden_tag() }}
+                        <fieldset class="form-group">
+                            <legend class="border-bottom mb-4" style="text-align: center;"></legend>
+                            <div class="form-group">
+                                {{ form.username.label(class="form-control-label") }}
+                                {% if form.username.errors %}
+                                    {{ form.username(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.username.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.username(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.password.label(class="form-control-label") }}
+                                {% if form.password.errors %}
+                                    {{ form.password(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.password.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.password(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-check">
+                                {{ form.remember(class="form-check-input") }}
+                                {{ form.remember.label(class="form-check-label") }}
+                            </div>
+                        </fieldset>
+                        <div class="form-group">
+                            {{ form.submit(class="btn btn-outline-info") }}
                         </div>
-                    {% else %}
-                        {{ form.username(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.password.label(class="form-control-label") }}
-                    {% if form.password.errors %}
-                        {{ form.password(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.password.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.password(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-check">
-                    {{ form.remember(class="form-check-input") }}
-                    {{ form.remember.label(class="form-check-label") }}
-                </div>
-            </fieldset>
-            <div class="form-group">
-                {{ form.submit(class="btn btn-outline-info") }}
+                        <small class="text-muted ml-2">
+                            <a href="{{ url_for('auth.register') }}">Need an account? Sign Up</a>
+                        </small>
+                    </form>
             </div>
-            <small class="text-muted ml-2">
-                <a href="{{ url_for('auth.register') }}">Need an account? Sign Up</a>
-            </small>
-        </form>
-    </div>
-{% endblock content %}
+        </div>
+    </body>
+</html>
+
+

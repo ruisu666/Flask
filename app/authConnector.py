@@ -1,6 +1,11 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, flash, redirect, url_for, session
 from app.forms import LoginForm 
-from app.utils import execute_query
+from app.utils import (
+    get_cursor,
+    get_db_connection,
+    close_db_connection,
+    logout_user
+)
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -11,22 +16,28 @@ def index():
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
 
-        query = "SELECT * FROM tbladmin WHERE username = %s AND password = %s"
-        result = execute_query(query, (username, password), fetchone=True)
+        cursor, connection = get_cursor()
+        if connection is not None:
+            query = "SELECT * FROM tbladmin WHERE username = %s AND password = %s"
+            cursor.execute(query, (username, password))
+            user = cursor.fetchone()
 
-        if result:
-            flash('Login successful!', 'success')
-            return redirect(url_for('dashboard.dashboard'))
+            if user:
+                flash('Login successful!', 'success')
+                return redirect(url_for('dashboard.dashboard'))
+            else:
+                flash('Login unsuccessful. Please check username and password', 'danger')
+
+            cursor.close()
+            close_db_connection()
         else:
-            flash('Login unsuccessful. Please check username and password', 'danger')
+            flash('Error connecting to the database. Please try again later.', 'danger')
     
-    return render_template('login.html', form=form)
-
+    return render_template('login.html', title='Log In', form=form)
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
