@@ -15,14 +15,14 @@ def get_db_connection():
         print("Error connecting to MySQL database:", err)
         return None
 
-def close_db_connection(connection):
-    if connection:
-        connection.close()
-
 def get_cursor():
     connection = get_db_connection()
     cursor = connection.cursor()
     return cursor, connection
+
+def close_db_connection(connection):
+    if connection:
+        connection.close()
 
 def logout_user():
     session.clear()

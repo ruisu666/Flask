@@ -78,3 +78,15 @@ body {
   .account-heading {
     font-size: 2.5rem;
   }
+
+    /* Custom button color */
+    .btn-green {
+      background-color: #54dd8d;
+      border-color: #54dd8d;
+  }
+
+  /* Lighter shade on hover */
+  .btn-green:hover {
+      background-color: #36ff8a;
+      border-color: #36ff8a;
+  }
