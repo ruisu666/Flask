@@ -11,7 +11,7 @@
             <div class="content-section col-md-3" style="box-shadow: 0 0 10px rgba(0,0,0,0.2); padding: 20px; border-radius: 10px;"></br>
                 <img src="{{ url_for('static', filename='images/neust_logo.png') }}" alt="NEUST Logo" class="img-fluid mb-4" style="width: 250px; height: auto; display: block; margin-left: auto; margin-right: auto;">
                 <p style="text-align: center; font-size: 24px; font-weight: bold;">Vehicle Management System</p> 
-                <p style="text-align: center; font-size: 24px; font-weight: 0;">Login</p>
+                <p style="text-align: center; font-size: 24px; font-weight: 0;">Admin Login</p>
                     <form method="POST" action="{{ url_for('auth.adminlogin') }}" novalidate>
                         {{ form.hidden_tag() }}
                         <fieldset class="form-group">

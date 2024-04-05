@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, session
 userdashboard_bp = Blueprint('dashboard', __name__)
 
 @userdashboard_bp.route('/dashboard/user')
-def dashboard():
+def userdashboard():
     # Check if admin is logged in
     admin_id = session.get('adminID')
     print ("Session:", session)
