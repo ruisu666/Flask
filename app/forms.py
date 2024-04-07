@@ -36,8 +36,9 @@ class RegistrationForm(FlaskForm):
         """
         Custom password validator.
         """
-        print(password.data)
         special_characters = "!@#$%^&*()_+-=[]{}|;:,.<>?/~"
+        if len(password.data) < 16:
+            raise ValidationError('Password must be at least 16 characters long.')
         if not any(char.isdigit() for char in password.data):
             raise ValidationError('Password must contain at least one digit.')
         if not any(char.isupper() for char in password.data):
@@ -46,7 +47,6 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Password must contain at least one lowercase letter.')
         if not any(char in special_characters for char in password.data):
             raise ValidationError('Password must contain at least one special character.')
-
     def validate_emailaddress(self, emailaddress):
         """
         Custom email validation to check for uniqueness.
