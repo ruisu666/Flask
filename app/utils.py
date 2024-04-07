@@ -26,3 +26,16 @@ def close_db_connection(connection):
 
 def logout_user():
     session.clear()
+
+def log_in_user(user, user_id, user_role):
+    session["user"] = user
+    session["user_id"] = user_id
+    session["user_role"] = user_role
+
+def is_user_logged_in():
+    return "user_id" in session
+
+def get_current_user_data():
+    user = session.get("user")
+    user_id = session.get("user_id")
+    return user, user_id

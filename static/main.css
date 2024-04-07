@@ -91,3 +91,7 @@ body {
       border-color: #36ff8a;
   }
 
+  #passwordStrength {
+    width: 50%; /* Adjust this value to set the desired width */
+    height: 20px; /* Adjust this value to set the desired height */
+}

@@ -92,7 +92,7 @@
                     }).then(response => {
                         if (response.ok) {
                             // Redirect the user to the login page or any other desired page
-                            window.location.href = '{{ url_for("auth.userlogin") }}';
+                            window.location.href = '{{ url_for("auth.login") }}';
                         } else {
                             console.error('Logout failed');
                         }

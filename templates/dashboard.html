@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <!-- Common dashboard header -->
+    <header>
+        <h1>Welcome to the Dashboard</h1>
+        <!-- Add any common header elements -->
+    </header>
+
+    <!-- Dashboard content -->
+    <main>
+        {% if user_role == 'admin' %}
+            <!-- Admin-specific content -->
+            <h2>Admin Dashboard</h2>
+            <!-- Add admin-specific dashboard elements -->
+        {% elif user_role == 'user' %}
+            <!-- User-specific content -->
+            <h2>User Dashboard</h2>
+            <!-- Add user-specific dashboard elements -->
+        {% else %}
+            <!-- Default or error content if user role is not recognized -->
+            <p>Unknown user role</p>
+        {% endif %}
+    </main>
+
+    <!-- Common dashboard footer -->
+    <footer>
+        <!-- Add any common footer elements -->
+    </footer>
+{% endblock %}
