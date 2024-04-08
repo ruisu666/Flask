@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, session
 from app.forms import LoginForm, RegistrationForm
 from app.utils import get_cursor, close_db_connection, logout_user, log_in_user
 import mysql.connector 
-from app.dashboardConnector import dashboard_bp  # Import the unified dashboard blueprint
+from app.dashboardConnector import dashboard_bp 
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -99,10 +99,10 @@ def register():
                 cursor.execute(sql_vehicle, (userID, licenseplate, model))
                 connection.commit()
 
-                flash('Registration successful!', 'success')  # Flash registration success message
+                flash('Registration successful! Please check your email to verify your email address and complete the registration.', 'success') 
                 cursor.close()
                 close_db_connection(connection)
-                return redirect(url_for('auth.login'))  # Redirect to login page after successful registration
+                return redirect(url_for('auth.login')) 
 
             except mysql.connector.Error as err:
                 flash('Error registering user or vehicle: {}'.format(err), 'danger')

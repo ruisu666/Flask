@@ -13,8 +13,14 @@ class RegistrationForm(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired()])
     lastname = StringField('Last Name', validators=[DataRequired()])
     emailaddress = StringField('Email Address', validators=[DataRequired(), Email()])
+    confirm_email = StringField('Confirm Email Address', validators=[DataRequired(), Email(), EqualTo('emailaddress')])
     contactnumber = StringField('Contact Number', validators=[DataRequired(), Length(min=11, max=11)])
-    
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    vehicle_model = StringField('Vehicle Model', validators=[DataRequired()])
+    license_number = StringField('License Number', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
     # Custom validator for contact number
     def validate_contactnumber(form, field):
         if not field.data.isdigit():
