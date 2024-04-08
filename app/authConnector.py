@@ -1,10 +1,13 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, session
+from flask_mail import Mail
 from app.forms import LoginForm, RegistrationForm
-from app.utils import get_cursor, close_db_connection, logout_user, log_in_user
-import mysql.connector 
-from app.dashboardConnector import dashboard_bp 
+from app.utils import get_cursor, close_db_connection, logout_user, log_in_user, send_verification_email, generate_verification_token, verify_token
+import mysql.connector
+from app.dashboardConnector import dashboard_bp
+from app import app
 
 auth_bp = Blueprint('auth', __name__)
+mail = Mail(app)  # Initialize Mail with the Flask app instance
 
 @auth_bp.route('/')
 def index():
@@ -22,7 +25,7 @@ def login():
         except AttributeError:
             flash('Error connecting to the database. Please try again later.', 'danger')
             return redirect(url_for('auth.login'))
-        
+
         if connection is not None:
             # Check if the email exists in the admin table
             query = "SELECT adminID, password FROM admin WHERE email = %s"
@@ -33,6 +36,7 @@ def login():
                 admin_id = admin_info[0]
                 session['adminID'] = admin_id
                 session['user_role'] = 'admin'
+                log_in_user(email, admin_id, 'admin')  # Log in the user
                 flash('Admin login successful!', 'success')
                 cursor.close()
                 close_db_connection(connection)
@@ -47,6 +51,7 @@ def login():
                 info_id = user_info[0]
                 session['infoID'] = info_id
                 session['user_role'] = 'user'
+                log_in_user(email, info_id, 'user')  # Log in the user
                 flash('User login successful!', 'success')
                 cursor.close()
                 close_db_connection(connection)
@@ -58,59 +63,87 @@ def login():
         else:
             flash('Error connecting to the database. Please try again later.', 'danger')
             return redirect(url_for('auth.login'))
-    
+
     return render_template('login.html', title='Log In', form=form)
 
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 def logout():
-    logout_user()  
-    return redirect(url_for('auth.login'))  
+    logout_user()
+    return redirect(url_for('auth.login'))
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
-        studno = form.studno.data
-        firstname = form.firstname.data
-        lastname = form.lastname.data
-        emailaddress = form.emailaddress.data
-        contactnumber = form.contactnumber.data
-        password = form.password.data
-        licenseplate = form.license_number.data
-        model = form.vehicle_model.data
+        session['registration_data'] = {
+            'studno': form.studno.data,
+            'firstname': form.firstname.data,
+            'lastname': form.lastname.data,
+            'email': form.emailaddress.data,
+            'contactnumber': form.contactnumber.data,
+            'password': form.password.data,
+            'licenseplate': form.license_number.data,
+            'model': form.vehicle_model.data
+        }
 
-        try:
-            cursor, connection = get_cursor()
-        except AttributeError:
-            flash('Error connecting to the database. Please try again later.', 'danger')
-            return redirect(url_for('auth.register'))
+        token = generate_verification_token()
 
-        if connection is not None:
+        # Store the token in the session
+        session['verification_token'] = token
+
+        # Send verification email
+        send_verification_email(form.emailaddress.data, token)
+
+        flash('A verification email has been sent to your email address. Please verify your email to complete registration.', 'success')
+        return redirect(url_for('auth.login'))
+
+    return render_template('register.html', form=form)
+
+
+@auth_bp.route('/verify_email/<token>', methods=['GET'])
+def verify_email(token):
+    if verify_token(token):
+        registration_data = session.get('registration_data')
+
+        if registration_data:
             try:
-                # Inserting data into the database
+                cursor, connection = get_cursor()
+
+                # Insert user data into the userinfo table
                 sql_userinfo = "INSERT INTO userinfo (studno, lastname, firstname, email, contactnumber, password) VALUES (%s, %s, %s, %s, %s, %s)"
-                cursor.execute(sql_userinfo, (studno, lastname, firstname, emailaddress, contactnumber, password))
+                cursor.execute(sql_userinfo, (
+                    registration_data['studno'],
+                    registration_data['lastname'],
+                    registration_data['firstname'],
+                    registration_data['email'],
+                    registration_data['contactnumber'],
+                    registration_data['password']
+                ))
                 connection.commit()
 
-                userID = cursor.lastrowid
+                # Retrieve the last inserted user ID
+                user_id = cursor.lastrowid
 
+                # Insert vehicle data into the vehicle table
                 sql_vehicle = "INSERT INTO vehicle (userID, licenseplate, model) VALUES (%s, %s, %s)"
-                cursor.execute(sql_vehicle, (userID, licenseplate, model))
+                cursor.execute(sql_vehicle, (user_id, registration_data['licenseplate'], registration_data['model']))
                 connection.commit()
 
-                flash('Registration successful! Please check your email to verify your email address and complete the registration.', 'success') 
+                flash('Your email has been verified. You can now log in.', 'success')
                 cursor.close()
                 close_db_connection(connection)
-                return redirect(url_for('auth.login')) 
-
+                session.pop('registration_data')
+                return redirect(url_for('auth.login'))
             except mysql.connector.Error as err:
                 flash('Error registering user or vehicle: {}'.format(err), 'danger')
                 cursor.close()
                 close_db_connection(connection)
-                return redirect(url_for('auth.register'))
-
+                return redirect(url_for('auth.login'))
         else:
-            flash('Error connecting to the database. Please try again later.', 'danger')
+            flash('Registration data not found. Please try registering again.', 'danger')
+            return redirect(url_for('auth.login'))
+    else:
+        flash('Invalid or expired verification token.', 'danger')
+        return redirect(url_for('auth.login'))
 
-    return render_template('register.html', form=form)
