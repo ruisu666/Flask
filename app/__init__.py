@@ -1,5 +1,3 @@
-# __init__.py
-
 from flask import Flask
 from flask_mail import Mail
 import os
@@ -16,12 +14,13 @@ mail = Mail(app)
 
 app.config['SECRET_KEY'] = 'your_secret_key'
 
-from app.authConnector import auth_bp
-from app.dashboardConnector import dashboard_bp
-from app.logsConnector import logs_bp
-from app.vehiclesConnector import vehicles_bp
+# Comment out the blueprint registrations
+# from app.authConnector import auth_bp
+# from app.dashboardConnector import dashboard_bp
+# from app.logsConnector import logs_bp
+# from app.vehiclesConnector import vehicles_bp
 
-app.register_blueprint(auth_bp)
-app.register_blueprint(dashboard_bp)
-app.register_blueprint(logs_bp)
-app.register_blueprint(vehicles_bp)
+# app.register_blueprint(auth_bp)
+# app.register_blueprint(dashboard_bp)
+# app.register_blueprint(logs_bp)
+# app.register_blueprint(vehicles_bp)

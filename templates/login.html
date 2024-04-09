@@ -25,21 +25,21 @@
                         {% if messages %}
                             <div class="alert-container">
                                 {% for category, message in messages %}
-                                    <div class="alert alert-{{ category }}">
-                                        {% if category == 'success' %}
-                                            {{ message }}
-                                            {% for category, message in messages %}
-                                                {% if category == 'flash_link' %}
-                                                    <a href="{{ message }}">Click here to resend</a>
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% endif %}
-                                    </div>
+                                    {% if category == 'verification_success_message' %}
+                                        <div class="alert alert-success">
+                                            <div class="text-success">{{ message }}</div>
+                                            <a href="{{ url_for('auth.resend_verification_email') }}">Click here to resend</a>
+                                        </div>
+                                    {% elif category == 'success' %}
+                                        <div class="alert alert-success">{{ message }}</div>
+                                    {% elif category == 'danger' %}
+                                        <div class="alert alert-danger">{{ message }}</div>
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                         {% endif %}
                     {% endwith %}
-                    
+
                     </div>
                     <div class="form-group">
                         {{ form.email.label(class="form-control-label") }}  
@@ -73,6 +73,8 @@
                 </div>
             </form>
             <p style="text-align: center; font-size: 16px;">Don't have an account? <a href="{{ url_for('auth.register') }}">Create one</a></p> 
+            <!-- Adding "Having trouble logging in?" link -->
+            <p style="text-align: center; font-size: 16px;"><a href="{{ url_for('account_recovery.account_recovery') }}">Having trouble logging in?</a></p> 
         </div>
     </div>
     <style>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/neust_logo.png') }}">
+    <title>VMS - Account Recovery</title>
+</head>
+<body>
+    <div class="row justify-content-center">
+        <div class="content-section col-md-3" style="box-shadow: 0 0 10px rgba(0,0,0,0.2); padding: 20px; border-radius: 10px;">
+            <img src="{{ url_for('static', filename='images/neust_logo.png') }}" alt="NEUST Logo" class="img-fluid mb-4" style="width: 250px; height: auto; display: block; margin-left: auto; margin-right: auto;">
+            <p style="text-align: center; font-size: 24px; font-weight: bold;">Account Recovery</p> 
+            <form method="POST" action="" novalidate>
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4" style="text-align: center;"></legend>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    <div class="col-md-20">
+                        <div class="alert-container">
+                            {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message | safe }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                    <div class="form-group">
+                        {{ form.email.label(class="form-control-label") }}  
+                        {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid") }} 
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %} 
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ form.email(class="form-control form-control-lg") }} 
+                        {% endif %}
+                    </div>
+                </fieldset>
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-green btn-block">Send Verification Email</button>
+                </div>
+            </form>
+            <p style="text-align: center; font-size: 16px;">Remember your password? <a href="{{ url_for('auth.login') }}">Log in</a></p> 
+        </div>
+    </div>
+</body>
+</html>

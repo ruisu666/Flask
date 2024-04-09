@@ -69,3 +69,11 @@ class RegistrationForm(FlaskForm):
         connection.close()
         if result > 0:
             raise ValidationError('Email address is already in use. Please use a different email.')
+class AccountRecoveryForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Send Verification Email')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')
