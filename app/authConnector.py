@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, session
 from flask_mail import Mail
 from app.forms import LoginForm, RegistrationForm
 from app.utils import get_cursor, close_db_connection, logout_user, log_in_user, send_verification_email, generate_verification_token, verify_token
+from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 from app.dashboardConnector import dashboard_bp
 from app import app
@@ -32,7 +33,7 @@ def login():
             cursor.execute(query, (email,))
             admin_info = cursor.fetchone()
 
-            if admin_info and password == admin_info[1]:
+            if admin_info and check_password_hash(admin_info[1], password):
                 admin_id = admin_info[0]
                 session['adminID'] = admin_id
                 session['user_role'] = 'admin'
@@ -47,7 +48,7 @@ def login():
             cursor.execute(query, (email,))
             user_info = cursor.fetchone()
 
-            if user_info and password == user_info[1]:
+            if user_info and check_password_hash(user_info[1], password):
                 info_id = user_info[0]
                 session['infoID'] = info_id
                 session['user_role'] = 'user'
@@ -76,13 +77,15 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
+        password_hash = generate_password_hash(form.password.data)  # Hash the password
+
         session['registration_data'] = {
             'studno': form.studno.data,
             'firstname': form.firstname.data,
             'lastname': form.lastname.data,
             'email': form.emailaddress.data,
             'contactnumber': form.contactnumber.data,
-            'password': form.password.data,
+            'password': password_hash,  # Store the hashed password
             'licenseplate': form.license_number.data,
             'model': form.vehicle_model.data
         }
@@ -137,6 +140,9 @@ def verify_email(token):
             try:
                 cursor, connection = get_cursor()
 
+                # Hash the password
+                password_hash = registration_data['password']
+
                 # Insert user data into the userinfo table
                 sql_userinfo = "INSERT INTO userinfo (studno, lastname, firstname, email, contactnumber, password) VALUES (%s, %s, %s, %s, %s, %s)"
                 cursor.execute(sql_userinfo, (
@@ -145,7 +151,7 @@ def verify_email(token):
                     registration_data['firstname'],
                     registration_data['email'],
                     registration_data['contactnumber'],
-                    registration_data['password']
+                    password_hash  # Store the hashed password
                 ))
                 connection.commit()
 
