@@ -6,6 +6,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 from app.dashboardConnector import dashboard_bp
 from app import app
+from flask import request
+import requests
 
 auth_bp = Blueprint('auth', __name__)
 mail = Mail(app) 
@@ -17,14 +19,27 @@ def index():
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+
     if form.validate_on_submit():
+        recaptcha_response = request.form.get('g-recaptcha-response')
+        if not recaptcha_response:
+            flash('Please complete the reCAPTCHA challenge.', 'danger')
+            return redirect(url_for('auth.login'))
         
+        recaptcha_secret_key = '6LfP-rUpAAAAAMfSpH2D0HIKxOodLKtgEi8Qxzdu'  
+        verification_url = 'https://www.google.com/recaptcha/api/siteverify'
+        params = {
+            'secret': recaptcha_secret_key,
+            'response': recaptcha_response
+        }
+        response = requests.post(verification_url, data=params)
+        if not response.json().get('success'):
+            flash('reCAPTCHA verification failed. Please try again.', 'danger')
+            return redirect(url_for('auth.login'))
+
         email = form.email.data
         password = form.password.data
 
-        print(f"Email: {email}")
-        print(f"Password: {password}")
-        
         try:
             cursor, connection = get_cursor()
         except AttributeError:
@@ -68,6 +83,7 @@ def login():
             return redirect(url_for('auth.login'))
 
     return render_template('login.html', title='Log In', form=form)
+
 
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 def logout():
