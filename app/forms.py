@@ -2,6 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length
 from app.utils import get_cursor
+import phonenumbers
+from phonenumbers.phonenumberutil import NumberParseException
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()]) 
@@ -24,11 +26,20 @@ class RegistrationForm(FlaskForm):
     license_number = StringField('License Number', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-    # Custom validator for contact number
-    def validate_contactnumber(form, field):
-        if not field.data.isdigit():
-            raise ValidationError('Contact number must contain only numeric characters.')
-    
+    def validate_contactnumber(self, contactnumber):
+        """
+        Custom contact number validation to check if the number can be texted.
+        """
+        try:
+            parsed_number = phonenumbers.parse(contactnumber.data, "PH")
+            if not phonenumbers.is_valid_number(parsed_number):
+                raise ValidationError('Invalid phone number format. Please enter a valid Philippine phone number.')
+        except NumberParseException as e:
+            raise ValidationError('Invalid phone number format. Please enter a valid Philippine phone number.')
+
+        if len(contactnumber.data) != 11:
+            raise ValidationError('Contact number must be 11 digits long.')
+        
     def validate_password(self, password):
         """
         Custom password validator.
