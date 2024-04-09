@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length
-from app.utils import get_cursor
+from app.utils import get_cursor, hash_password  # Import hash_password function
+from flask import session  # Import session object
 import phonenumbers
 from phonenumbers.phonenumberutil import NumberParseException
 
@@ -44,7 +45,6 @@ class RegistrationForm(FlaskForm):
         """
         Custom password validator.
         """
-        print(password.data)
         special_characters = "!@#$%^&*()_+-=[]{}|;:,.<>?/~"
         if len(password.data) < 8:
             raise ValidationError('Password must be at least 8 characters long.')
@@ -69,6 +69,7 @@ class RegistrationForm(FlaskForm):
         connection.close()
         if result > 0:
             raise ValidationError('Email address is already in use. Please use a different email.')
+
 class AccountRecoveryForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Send Verification Email')
@@ -77,3 +78,29 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField('New Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+
+    def validate_password(self, password):
+        """
+        Custom password validator.
+        """
+        special_characters = "!@#$%^&*()_+-=[]{}|;:,.<>?/~"
+        if len(password.data) < 8:
+            raise ValidationError('Password must be at least 8 characters long.')
+        if not any(char.isdigit() for char in password.data):
+            raise ValidationError('Password must contain at least one digit.')
+        if not any(char.isupper() for char in password.data):
+            raise ValidationError('Password must contain at least one uppercase letter.')
+        if not any(char.islower() for char in password.data):
+            raise ValidationError('Password must contain at least one lowercase letter.')
+        if not any(char in special_characters for char in password.data):
+            raise ValidationError('Password must contain at least one special character.')
+
+    def validate_password_change(self, password):
+        """
+        Custom password change validation to ensure the new password is different from the old one.
+        """
+        old_password_hash = session.get('old_password_hash')
+        new_password_hash = hash_password(password.data) 
+
+        if new_password_hash == old_password_hash:
+            raise ValidationError('New password must be different from the old one.')

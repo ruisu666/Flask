@@ -18,9 +18,13 @@ def index():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        
         email = form.email.data
         password = form.password.data
 
+        print(f"Email: {email}")
+        print(f"Password: {password}")
+        
         try:
             cursor, connection = get_cursor()
         except AttributeError:
@@ -98,7 +102,6 @@ def register():
         flash_link = url_for('auth.resend_verification_email')
         flash(flash_message, 'verification_success_message')
         flash(flash_link, 'flash_link')
-
 
 
         return redirect(url_for('auth.login'))

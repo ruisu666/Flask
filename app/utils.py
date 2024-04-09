@@ -3,6 +3,7 @@ from flask import session, flash, url_for
 from flask_mail import Mail, Message
 from app import app
 import secrets
+from werkzeug.security import generate_password_hash
 
 mail = Mail(app)
 
@@ -142,33 +143,7 @@ def send_recovery_email(email, token):
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
             <!-- Custom CSS -->
             <style>
-                .container {{
-                    max-width: 600px;
-                    margin: auto;
-                    padding: 20px;
-                }}
-                .btn-reset {{
-                    display: inline-block;
-                    font-weight: 400;
-                    color: #fff;
-                    text-align: center;
-                    vertical-align: middle;
-                    user-select: none;
-                    background-color: #007bff;
-                    border: 1px solid transparent;
-                    padding: 0.375rem 0.75rem;
-                    font-size: 1rem;
-                    line-height: 1.5;
-                    border-radius: 0.25rem;
-                    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-                    text-decoration: none;
-                }}
-                .btn-reset:hover {{
-                    color: #fff;
-                    background-color: #0056b3;
-                    border-color: #0056b3;
-                    text-decoration: none;
-                }}
+                /* CSS styles */
             </style>
         </head>
         <body>
@@ -177,7 +152,7 @@ def send_recovery_email(email, token):
                 <h2 class="text-center">Reset Your Password</h2>
                 <p>Dear User,</p>
                 <p>You recently requested to reset your password. Click the following button to reset it:</p>
-                <p><a href="{url_for('reset_password.reset_password', token=token, _external=True)}" class="btn btn-reset btn-lg">Reset Password</a></p>
+                <p><a href="{url_for('account_recovery.reset_password', token=token, email=email, _external=True)}" class="btn btn-reset btn-lg">Reset Password</a></p>
                 <p>If you did not request a password reset, please ignore this email. This link is only valid for a limited time.</p>
                 <p>Thank you!</p>
             </div>
@@ -188,7 +163,14 @@ def send_recovery_email(email, token):
 
         # Send the email
         mail.send(message)
-        return True  # Email sent successfully
+        return True  
     except Exception as e:
         print(f"Error sending recovery email: {e}")
-        return False  # Failed to send email
+        return False 
+
+def hash_password(password):
+    """
+    Hashes the given password using Werkzeug's generate_password_hash function.
+    """
+    hashed_password = generate_password_hash(password)
+    return hashed_password
