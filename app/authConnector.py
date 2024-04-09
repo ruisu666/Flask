@@ -95,11 +95,38 @@ def register():
         # Send verification email
         send_verification_email(form.emailaddress.data, token)
 
-        flash('A verification email has been sent to your email address. Please verify your email to complete registration.', 'success')
+        flash_message = 'A verification email has been sent to your email address. Please verify your email to complete registration.'
+        flash_link = url_for('auth.resend_verification_email')
+        flash(flash_message, 'success')
+        flash(flash_link, 'flash_link')
+
         return redirect(url_for('auth.login'))
 
     return render_template('register.html', form=form)
 
+
+@auth_bp.route('/resend_verification_email', methods=['GET'])
+def resend_verification_email():
+    # Get the email address from the registration data in the session
+    email_address = session.get('registration_data', {}).get('email')
+
+    if email_address:
+        # Generate a new verification token
+        token = generate_verification_token()
+
+        # Store the token in the session
+        session['verification_token'] = token
+
+        # Send verification email
+        send_verification_email(email_address, token)
+
+        flash('A verification email has been resent to your email address.', 'success')
+        return redirect(url_for('auth.login'))
+
+    else:
+        flash('No email address found in the registration data. Please try registering again.', 'danger')
+
+    return redirect(url_for('auth.register'))
 
 @auth_bp.route('/verify_email/<token>', methods=['GET'])
 def verify_email(token):
@@ -146,4 +173,3 @@ def verify_email(token):
     else:
         flash('Invalid or expired verification token.', 'danger')
         return redirect(url_for('auth.login'))
-

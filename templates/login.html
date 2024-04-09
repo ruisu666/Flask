@@ -22,16 +22,24 @@
                     <!-- flash message -->
                     <div class="col-md-20">
                         {% with messages = get_flashed_messages(with_categories=true) %}
-                            {% if messages %}
-                                <div class="alert-container">
-                                    {% for category, message in messages %}
-                                        <div class="alert alert-{{ category }}">
+                        {% if messages %}
+                            <div class="alert-container">
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }}">
+                                        {% if category == 'success' %}
                                             {{ message }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        {% endwith %}        
+                                            {% for category, message in messages %}
+                                                {% if category == 'flash_link' %}
+                                                    <a href="{{ message }}">Click here to resend</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    
                     </div>
                     <div class="form-group">
                         {{ form.email.label(class="form-control-label") }}  
