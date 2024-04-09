@@ -1,18 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css', v='1.0') }}">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Add Google Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/neust_logo.png') }}">
-    <title>VMS</title>
-</head>
-<body>
-    <div class="container">
+{% extends 'layout_forms.html' %}
+{% block content %}
+<div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="content-section" style="box-shadow: 0 0 10px rgba(0,0,0,0.2); padding: 20px; border-radius: 10px;">
@@ -21,8 +9,29 @@
                     <h3 class="text-center mb-4">Registration</h3>
                     <form id="registrationForm" method="POST" action="{{ url_for('auth.register') }}" novalidate>
                         {{ form.hidden_tag() }}
+                        <legend class="border-bottom mb-4" style="text-align: center;"></legend>
+                        <div class="col-md-20">
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                <div class="alert-container">
+                                    {% for category, message in messages %}
+                                        {% if category == 'verification_success_message' %}
+                                            <div class="alert alert-success">
+                                                <div class="text-success">{{ message }}</div>
+                                                <a href="{{ url_for('auth.resend_verification_email') }}">Click here to resend</a>
+                                            </div>
+                                        {% elif category == 'success' %}
+                                            <div class="alert alert-success">{{ message }}</div>
+                                        {% elif category == 'danger' %}
+                                            <div class="alert alert-danger">{{ message }}</div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% endwith %}
+                        </div>
                         <div class="form-group">
-                            <legend class="border-bottom mb-4" style="text-align: center;"></legend>
+                            
                             {{ form.studno.label(class="form-control-label") }}
                             {% if form.studno.errors %}
                                 {{ form.studno(class="form-control is-invalid", placeholder="Student Number (e.g. SUM2021-00366)") }}
@@ -177,10 +186,11 @@
                                 <li>Password must contain at least one special character.</li>
                             </ul> <br>
                         </div>
-                        <br>
+                        <div class="form-group">
+                            <div class="g-recaptcha" data-sitekey="6LfP-rUpAAAAAJTZx8j-nxKTUH18EfG3We5jW9T_"></div>
+                        </div>
                         <button type="button" id="submitButton" class="btn btn-primary btn-block">Register</button>
-                    </form>
-                    
+                    </form>     
                     <div class="row justify-content-center">
                             <div class="col-md-8">
                                 <div class="text-center mt-3">
@@ -192,9 +202,8 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <script>
+</div>
+<script>
         function togglePasswordVisibility() {
             var passwordInput = document.getElementById("passwordInput");
             var confirmPasswordInput = document.getElementById("confirmPasswordInput");
@@ -259,6 +268,7 @@
                 }
             });
         });
-    </script>
-</body>
-</html>
+        
+</script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+{% endblock content %}

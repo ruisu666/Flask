@@ -95,6 +95,22 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
+        recaptcha_response = request.form.get('g-recaptcha-response')
+        if not recaptcha_response:
+            flash('Please complete the reCAPTCHA challenge.', 'danger')
+            return redirect(url_for('auth.register'))
+
+        recaptcha_secret_key = '6LfP-rUpAAAAAMfSpH2D0HIKxOodLKtgEi8Qxzdu'  
+        verification_url = 'https://www.google.com/recaptcha/api/siteverify'
+        params = {
+            'secret': recaptcha_secret_key,
+            'response': recaptcha_response
+        }
+        response = requests.post(verification_url, data=params)
+        if not response.json().get('success'):
+            flash('reCAPTCHA verification failed. Please try again.', 'danger')
+            return redirect(url_for('auth.register'))
+
         password_hash = generate_password_hash(form.password.data) 
 
         session['registration_data'] = {
@@ -119,11 +135,9 @@ def register():
         flash(flash_message, 'verification_success_message')
         flash(flash_link, 'flash_link')
 
-
         return redirect(url_for('auth.login'))
 
     return render_template('register.html', form=form)
-
 
 @auth_bp.route('/resend_verification_email', methods=['GET'])
 def resend_verification_email():
