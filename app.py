@@ -10,12 +10,11 @@ import os
 app = Flask(__name__)
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465  # Use port 465 for SSL/TLS encryption
-app.config['MAIL_USE_SSL'] = True  # Enable SSL/TLS encryption
+app.config['MAIL_PORT'] = 465  
+app.config['MAIL_USE_SSL'] = True  
 app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = 'e.luis.pelaez@gmail.com'
-
 
 mail = Mail(app)
 

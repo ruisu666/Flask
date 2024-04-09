@@ -15,8 +15,11 @@ class RegistrationForm(FlaskForm):
     emailaddress = StringField('Email Address', validators=[DataRequired(), Email()])
     confirm_email = StringField('Confirm Email Address', validators=[DataRequired(), Email(), EqualTo('emailaddress')])
     contactnumber = StringField('Contact Number', validators=[DataRequired(), Length(min=11, max=11)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    password = PasswordField('Password', validators=[
+        DataRequired(),
+        EqualTo('confirm_password', message='Passwords must match')
+    ])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
     vehicle_model = StringField('Vehicle Model', validators=[DataRequired()])
     license_number = StringField('License Number', validators=[DataRequired()])
     submit = SubmitField('Submit')
@@ -26,24 +29,14 @@ class RegistrationForm(FlaskForm):
         if not field.data.isdigit():
             raise ValidationError('Contact number must contain only numeric characters.')
     
-    # Password validation
-    password = PasswordField('Password', validators=[
-        DataRequired(message="Please enter a password."),
-        EqualTo('confirm_password', message='Passwords must match')
-    ])
-    
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
-    vehicle_model = StringField('Vehicle Model', validators=[DataRequired()])
-    license_number = StringField('License Number', validators=[DataRequired()])
-    submit = SubmitField('Submit')
-
-
     def validate_password(self, password):
         """
         Custom password validator.
         """
         print(password.data)
         special_characters = "!@#$%^&*()_+-=[]{}|;:,.<>?/~"
+        if len(password.data) < 8:
+            raise ValidationError('Password must be at least 8 characters long.')
         if not any(char.isdigit() for char in password.data):
             raise ValidationError('Password must contain at least one digit.')
         if not any(char.isupper() for char in password.data):

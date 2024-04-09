@@ -138,10 +138,10 @@
                             <label class="form-check-label" for="togglePasswordCheckbox">Show Password</label>
                         </div>
                         <!-- Password strength meter -->
-                        <div class="form-group col-md-12" style="font-size: 15px; text-align: center;">
+                        <div class="form-group col-md-12" style="font-size: 15px;">
                             <progress id="passwordStrength" class="form-control" max="5" value="0"></progress> <br>
                             <ul>
-                                <li>Password must be 14 - 16 characters long</li>
+                                <li>Password must be at least 8 characters long</li>
                                 <li>Password must contain at least one digit.</li>
                                 <li>Password must contain at least one uppercase/lowercase letter.</li>
                                 <li>Password must contain at least one special character.</li>
@@ -197,32 +197,38 @@
         }
 
         function checkPasswordStrength() {
-            var password = document.getElementById("passwordInput").value;
-            var strengthMeter = document.getElementById("passwordStrength");
-            var strength = 0;
+    var password = document.getElementById("passwordInput").value;
+    var strengthMeter = document.getElementById("passwordStrength");
+    var strength = 0;
 
-            // Check if password contains at least one digit
-            if (/\d/.test(password)) {
-                strength++;
-            }
+    // Check if password contains at least one digit
+    if (/\d/.test(password)) {
+        strength++;
+    }
 
-            // Check if password contains at least one uppercase letter
-            if (/[A-Z]/.test(password)) {
-                strength++;
-            }
+    // Check if password contains at least one uppercase letter
+    if (/[A-Z]/.test(password)) {
+        strength++;
+    }
 
-            // Check if password contains at least one lowercase letter
-            if (/[a-z]/.test(password)) {
-                strength++;
-            }
+    // Check if password contains at least one lowercase letter
+    if (/[a-z]/.test(password)) {
+        strength++;
+    }
 
-            // Check if password contains at least one special character
-            if (/[^a-zA-Z0-9]/.test(password)) {
-                strength++;
-            }
+    // Check if password contains at least one special character
+    if (/[^a-zA-Z0-9]/.test(password)) {
+        strength++;
+    }
 
-            strengthMeter.value = strength;
-        }
+    // Max out the progress bar if all conditions are met
+    if (strength === 4) {
+        strengthMeter.value = 5; // Max value of the progress bar
+    } else {
+        strengthMeter.value = strength;
+    }
+}
+
 
         // Add event listeners
         document.getElementById("passwordInput").addEventListener("input", checkPasswordStrength);
