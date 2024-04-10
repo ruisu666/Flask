@@ -74,15 +74,19 @@ def login():
                 cursor.close()
                 close_db_connection(connection)
                 return redirect(url_for('dashboard.dashboard'))
-
-            flash('Invalid email or password', 'danger')
-            cursor.close()
-            close_db_connection(connection)
+            elif user_info:
+                flash('Invalid email or password', 'danger')
+            else:
+                flash('Email is not registered', 'danger')
+                cursor.close()
+                close_db_connection(connection)
+                return redirect(url_for('auth.login'))
         else:
             flash('Error connecting to the database. Please try again later.', 'danger')
             return redirect(url_for('auth.login'))
 
     return render_template('login.html', title='Log In', form=form)
+
 
 
 @auth_bp.route('/logout', methods=['GET', 'POST'])
