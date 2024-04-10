@@ -2,7 +2,11 @@
 
 To run this program, you need to follow a set of requirements first;
 
-1. pip requirements:
+1. Python
+   
+2. Any IDE or Text Editor (I use VS Code)
+
+3. pip requirements:
 
     pip install flask
     
