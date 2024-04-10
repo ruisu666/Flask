@@ -130,6 +130,15 @@ def register():
 
         send_verification_email(form.emailaddress.data, token)
 
+
+        print("Student Number:", form.studno.data)
+        print("First Name:", form.firstname.data)
+        print("Last Name:", form.lastname.data)
+        print("Email Address:", form.emailaddress.data)
+        print("Contact Number:", form.contactnumber.data)
+        print("Password:", form.password.data)
+        print("License Plate Number:", form.license_number.data)
+        print("Vehicle Model:", form.vehicle_model.data)
         flash_message = 'A verification email has been sent to your email address. Please verify your email to complete registration.'
         flash_link = url_for('auth.resend_verification_email')
         flash(flash_message, 'verification_success_message')
