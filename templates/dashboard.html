@@ -1,51 +1,90 @@
 {% extends "layout.html" %}
 {% block content %}
     <header>
-        <h1>Welcome to the Dashboard</h1>
     </header>
     <main>
         {% if user_role == 'admin' %}
-            <h2>Admin Dashboard</h2>
+            <h2 class="text-center">Admin Dashboard</h2>
         {% elif user_role == 'user' %}
             <div class="container user-dashboard">
-                <h2>TANG INA MO {{ user_firstname }} !</h2>
-                <div class="row">
-                    <!-- QR Code Image -->
-                    <div class="col-md-6">
-                        <div class="qr-code-image" style="background-color: #002b80; padding: 10px; border-radius: 5px;">
-                            <h3 style="color: white;">QR Code Image:</h3>
-                            <img src="data:image/png;base64,{{ qr_code_image }}" alt="QR Code" class="img-fluid">
+                </br>
+                <h2 class="text-center">TANG INA MO {{ user_firstname }} !</h2>
+                <div class="user-content">
+                    <div class="row justify-content-center">
+                        <!-- Introduction and Guidelines -->
+                        <div class="col-md-6">
+                            <div class="intro-guidelines text-center">
+                                <h3>Campus Watch</h3>
+                                <p>This is a vehicle management system for tracking time in and time out within the University of NEUST. The QR code presented here is to be shown to the guard each time users enter and exit the premises.</p>
+                                <h3>Guidelines:</h3>
+                                <ul>
+                                    <li>Always keep your QR code accessible.</li>
+                                    <li>Show your QR code to the guard upon entering and exiting the premises.</li>
+                                    <li>Ensure the QR code is clear and visible to the guard.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- QR Code Image -->
+                        <div class="col-md-6 text-center">
+                            <div class="qr-code-image" style="background-color: #002b80; padding: 10px; border-radius: 5px;">
+                                <h3 style="color: white;">QR Code Image:</h3>
+                                <img src="data:image/png;base64,{{ qr_code_image }}" alt="QR Code" class="img-fluid">
+                            </div>
                         </div>
                     </div>
-                    <!-- Decoded QR Code Data -->
-                    <div class="col-md-6">
-                        <div class="decoded-data" style="background-color: #002b80; color: black; padding: 10px; border: 2px solid #ffffff; border-radius: 5px;">
-                            <h3 style="color:white">Decoded QR Code Data:</h3>
-                            <ul class="list-group">
-                                {% for item in decoded_data %}
-                                    {% for line in item.split('\n') %}
-                                        {% if line.strip() %}
-                                            <li class="list-group-item">{{ line }}</li>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endfor %}
-                            </ul>
+                    <!-- Legend line -->
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="decodedDataModal" tabindex="-1" role="dialog" aria-labelledby="decodedDataModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="decodedDataModalLabel">Decoded QR Code Data</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <ul class="list-group">
+                                        {% for item in decoded_data %}
+                                            {% for line in item.split('\n') %}
+                                                {% if line.strip() %}
+                                                    <li class="list-group-item">{{ line }}</li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- Buttons Row -->
-                <div class="row mt-3">
-                    <div class="col-md-6">
-                        <a href="data:image/png;base64,{{ qr_code_image }}" download="qr_code_image.png" class="btn btn-primary">Download Image</a>
-                        <a href="#" class="btn btn-secondary">Another Action</a>
+                    
+                    <!-- Buttons Row -->
+                    <div class="row mt-3 justify-content-center">
+                        <div class="col-md-6 text-center">
+                            <a href="data:image/png;base64,{{ qr_code_image }}" download="qr_code_image.png" class="btn btn-primary">Download Image</a>
+                            <!-- Another Action Button -->
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#decodedDataModal">View Data</button>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                    <!--FOR THE DECODED LIST-->
-                    </div>
+                    <hr style="margin-top: 30px; margin-bottom: 30px; border-top: 1px solid #002b80;">
                 </div>
             </div>
+            <!-- Profile Personal Information -->
+            <div class="container profile-info mt-5">
+                <h3 class="text-center">Profile Personal Information</h3>
+                <!-- Add your profile personal information content here -->
+            </div>
+            <!-- Footing Content -->
+            <div class="container footing-content mt-5">
+                <p class="text-center">&copy; 2024 University of NEUST. All rights reserved.</p>
+                <!-- Add your footing content here -->
+            </div>
         {% else %}
-            <p>Unknown user role</p>
+            <p class="text-center">Unknown user role</p>
         {% endif %}
     </main>
 {% endblock %}
