@@ -8,21 +8,19 @@
             <h2>Admin Dashboard</h2>
         {% elif user_role == 'user' %}
             <div class="container user-dashboard">
-            </br>
                 <h2>TANG INA MO {{ user_firstname }} !</h2>
-            </br>
                 <div class="row">
                     <!-- QR Code Image -->
                     <div class="col-md-6">
-                        <div class="qr-code-image">
-                            <h3>QR Code Image:</h3>
+                        <div class="qr-code-image" style="background-color: #002b80; padding: 10px; border-radius: 5px;">
+                            <h3 style="color: white;">QR Code Image:</h3>
                             <img src="data:image/png;base64,{{ qr_code_image }}" alt="QR Code" class="img-fluid">
                         </div>
                     </div>
                     <!-- Decoded QR Code Data -->
                     <div class="col-md-6">
-                        <div class="decoded-data">
-                            <h3>Decoded QR Code Data:</h3>
+                        <div class="decoded-data" style="background-color: #002b80; color: black; padding: 10px; border: 2px solid #ffffff; border-radius: 5px;">
+                            <h3 style="color:white">Decoded QR Code Data:</h3>
                             <ul class="list-group">
                                 {% for item in decoded_data %}
                                     {% for line in item.split('\n') %}
@@ -50,6 +48,4 @@
             <p>Unknown user role</p>
         {% endif %}
     </main>
-    <footer>
-    </footer>
 {% endblock %}
