@@ -8,6 +8,9 @@ from app.dashboardConnector import dashboard_bp
 from app import app
 from flask import request
 import requests
+import base64
+import qrcode
+import io
 
 auth_bp = Blueprint('auth', __name__)
 mail = Mail(app) 
@@ -61,14 +64,16 @@ def login():
                 close_db_connection(connection)
                 return redirect(url_for('dashboard.dashboard'))
 
-            query = "SELECT infoID, password FROM userinfo WHERE email = %s"
+            query = "SELECT infoID, firstname, password FROM userinfo WHERE email = %s"
             cursor.execute(query, (email,))
             user_info = cursor.fetchone()
 
-            if user_info and check_password_hash(user_info[1], password):
+            if user_info and check_password_hash(user_info[2], password):
                 info_id = user_info[0]
+                user_firstname = user_info[1]  # Fetching user's first name
                 session['infoID'] = info_id
                 session['user_role'] = 'user'
+                session['user_firstname'] = user_firstname  # Storing user's first name in the session
                 log_in_user(email, info_id, 'user')
                 flash('User login successful!', 'success')
                 cursor.close()
@@ -85,9 +90,8 @@ def login():
             flash('Error connecting to the database. Please try again later.', 'danger')
             return redirect(url_for('auth.login'))
 
+
     return render_template('login.html', title='Log In', form=form)
-
-
 
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 def logout():
@@ -199,6 +203,17 @@ def verify_email(token):
                 cursor.execute(sql_vehicle, (user_id, registration_data['licenseplate'], registration_data['model']))
                 connection.commit()
 
+                # Generate QR code data
+                qr_data = f"Studno: {registration_data['studno']}\nLastname: {registration_data['lastname']}\nFirstname: {registration_data['firstname']}\nEmail: {registration_data['email']}\nContact Number: {registration_data['contactnumber']}\nLicense Plate: {registration_data['licenseplate']}\nVehicle Model: {registration_data['model']}"
+
+                # Generate QR code image using the generate_qr_code function
+                qr_image_str = generate_qr_code(qr_data)
+
+                # Store the Base64 string in the database
+                sql_qr_code = "INSERT INTO qr_codes (userID, qr_code_image) VALUES (%s, %s)"
+                cursor.execute(sql_qr_code, (user_id, qr_image_str))
+                connection.commit()
+
                 flash('Your email has been verified. You can now log in.', 'success')
                 cursor.close()
                 close_db_connection(connection)
@@ -215,3 +230,34 @@ def verify_email(token):
     else:
         flash('Invalid or expired verification token.', 'danger')
         return redirect(url_for('auth.login'))
+
+def generate_qr_code(data):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    # Create a PIL Image object
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    # Convert the PIL Image to a bytes object
+    img_bytes = io.BytesIO()
+    img.save(img_bytes, format='PNG')
+    img_bytes.seek(0)
+
+    # Encode the bytes object as a Base64 string
+    img_base64 = base64.b64encode(img_bytes.getvalue()).decode('utf-8')
+    
+    return img_base64
+
+
+
+
+
+
+
+

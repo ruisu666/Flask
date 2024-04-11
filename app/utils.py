@@ -51,7 +51,6 @@ def get_current_user_data():
     user_id = session.get("user_id")
     return user, user_id
 
-
 def send_verification_email(email, token):
     try:
         # Create the verification email message
