@@ -100,7 +100,7 @@ def send_verification_email(email, token):
                 <h2 class="text-center">Verify Your Email Address</h2>
                 <p>Dear User,</p>
                 <p>Click the following button to verify your email address:</p>
-                <p><a href="{url_for('auth.verify_email', token=token, _external=True)}" class="btn btn-verify btn-lg">Verify Email</a></p>
+                <p><a href="{url_for('auth.verify_user_email', token=token, _external=True)}" class="btn btn-verify btn-lg">Verify Email</a></p>
                 <p>Thank you!</p>
             </div>
         </body>

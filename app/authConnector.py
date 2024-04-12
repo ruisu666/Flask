@@ -230,7 +230,7 @@ def resend_verification_email():
     return redirect(url_for('auth.register_user'))
 
 @auth_bp.route('/verify_email/<token>', methods=['GET'])
-def verify_email(token):
+def verify_user_email(token):
     if verify_token(token):
         registration_data = session.get('registration_data')
 
