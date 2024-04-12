@@ -5,10 +5,11 @@
     <main>
         {% if user_role == 'admin' %}
             <h2 class="text-center">Admin Dashboard</h2>
+            <h2 class="text-center">Hello {{ admin_firstname }}!</h2>
         {% elif user_role == 'user' %}
             <div class="container user-dashboard">
                 </br>
-                <h2 class="text-center">TANG INA MO {{ user_firstname }} !</h2>
+                <h2 class="text-center">Hello {{ user_firstname }} !</h2>
                 <div class="user-content">
                     <div class="row justify-content-center">
                         <!-- Introduction and Guidelines -->

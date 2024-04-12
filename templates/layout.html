@@ -16,16 +16,20 @@
     <header class="site-header">
         <nav class="navbar navbar-expand-md navbar-dark bg-custom-color fixed-top">
           <div class="container">
-            <a class="navbar-brand mr-4" href="#">VMS</a>
+            <a class="navbar-brand mr-4" href="/dashboard">VMS</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarToggle">
               <div class="navbar-nav mr-auto">
-                <a class="nav-item nav-link" href="/dashboard">Scan My QR</a>
-                <a class="nav-item nav-link" href="#">Help</a>
                 {% if user_role == 'admin' %}
+                <a class="nav-item nav-link" href="/dashboard">Scan QR</a>
+                <a class="nav-item nav-link" href="#">Users</a>
                 <a class="nav-item nav-link" href="/logs">Logs</a>
+                {% elif user_role == 'user' %}
+                <a class="nav-item nav-link" href="/dashboard">My QR</a>
+                <a class="nav-item nav-link" href="#">My Vehicles</a>
+                <a class="nav-item nav-link" href="#">Help</a>
                 {% endif %}
               </div>
               <!-- Navbar Right Side -->
@@ -81,8 +85,7 @@
     <!--LOGOUT FUNCTION-->
     <script>
         document.getElementById('logout-link').addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent the default behavior of the link
-            // Display confirmation dialog using SweetAlert
+            event.preventDefault();
             Swal.fire({
                 title: 'Are you sure you want to logout?',
                 icon: 'warning',
@@ -90,13 +93,11 @@
                 confirmButtonText: 'Yes'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // If user confirms logout, proceed with logout process
                     fetch('{{ url_for("auth.logout") }}', {
                         method: 'POST',
-                        credentials: 'same-origin' // Send cookies (session) along with the request
+                        credentials: 'same-origin'
                     }).then(response => {
                         if (response.ok) {
-                            // Redirect the user to the login page or any other desired page
                             window.location.href = '{{ url_for("auth.landing") }}';
                         } else {
                             console.error('Logout failed');

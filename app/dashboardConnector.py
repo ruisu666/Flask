@@ -10,12 +10,17 @@ dashboard_bp = Blueprint('dashboard', __name__)
 @dashboard_bp.route('/dashboard')
 def dashboard():
     user_role = session.get('user_role')
+    #ADMIN SIDE
     if user_role == 'admin':
         adminID = session.get('adminID')
         if not adminID:
             flash('Please log in to access this page', 'danger')
             return redirect(url_for('auth.landing'))
-        return render_template('dashboard.html', user_role=user_role)
+        admin_firstname = session.get('admin_firstname')
+
+        return render_template('dashboard.html', user_role=user_role,admin_firstname=admin_firstname)
+    
+    #USER SIDE
     elif user_role == 'user':
         info_id = session.get('infoID')
         if not info_id:

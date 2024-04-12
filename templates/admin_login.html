@@ -19,7 +19,7 @@
                                 {% if category == 'verification_success_message' %}
                                     <div class="alert alert-success">
                                         <div class="text-success">{{ message }}</div>
-                                        <a href="{{ url_for('auth.resend_verification_email') }}">Click here to resend</a>
+                                        <a href="{{ url_for('auth.resend_admin_verification_email') }}">Click here to resend</a>
                                     </div>
                                 {% elif category == 'success' %}
                                     <div class="alert alert-success">{{ message }}</div>
@@ -71,7 +71,7 @@
         <div class="text-center mt-2">
             <a href="{{ url_for('auth.landing') }}" class="btn btn-link">Back to Landing Page</a>
         </div>
-        <p style="text-align: center; font-size: 16px;">Don't have an account? <a href="#">Create one</a></p> 
+        <p style="text-align: center; font-size: 16px;">Don't have an account? <a href="{{ url_for('auth.register_admin') }}">Create one</a></p> 
         
         <p style="text-align: center; font-size: 16px;"><a href="#">Having trouble logging in?</a></p> 
     </div>

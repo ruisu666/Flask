@@ -18,7 +18,7 @@
                                         {% if category == 'verification_success_message' %}
                                             <div class="alert alert-success">
                                                 <div class="text-success">{{ message }}</div>
-                                                <a href="{{ url_for('auth.resend_verification_email') }}">Click here to resend</a>
+                                                <a href="{{ url_for('auth.resend_user_verification_email') }}">Click here to resend</a>
                                             </div>
                                         {% elif category == 'success' %}
                                             <div class="alert alert-success">{{ message }}</div>
@@ -270,5 +270,4 @@
         });
         
 </script>
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 {% endblock content %}

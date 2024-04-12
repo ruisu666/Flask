@@ -51,7 +51,7 @@ def get_current_user_data():
     user_id = session.get("user_id")
     return user, user_id
 
-def send_verification_email(email, token):
+def send_user_verification_email(email, token):
     try:
         subject = "Verify Your Email Address"
         body = f"""
@@ -171,3 +171,66 @@ def hash_password(password):
     """
     hashed_password = generate_password_hash(password)
     return hashed_password
+
+def send_admin_verification_email(email, token):
+    try:
+        subject = "Verify Your Email Address"
+        body = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Email Verification</title>
+            <!-- Bootstrap CSS -->
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+            <!-- Custom CSS -->
+            <style>
+                .container {{
+                    max-width: 600px;
+                    margin: auto;
+                    padding: 20px;
+                }}
+                .btn-verify {{
+                    display: inline-block;
+                    font-weight: 400;
+                    color: #fff;
+                    text-align: center;
+                    vertical-align: middle;
+                    user-select: none;
+                    background-color: #007bff;
+                    border: 1px solid transparent;
+                    padding: 0.375rem 0.75rem;
+                    font-size: 1rem;
+                    line-height: 1.5;
+                    border-radius: 0.25rem;
+                    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                    text-decoration: none;
+                }}
+                .btn-verify:hover {{
+                    color: #fff;
+                    background-color: #0056b3;
+                    border-color: #0056b3;
+                    text-decoration: none;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1 class="text-center">Vehicle Management System</h1>
+                <h2 class="text-center">Verify Your Email Address</h2>
+                <p>Dear Admin,</p>
+                <p>Click the following button to verify your email address:</p>
+                <p><a href="{url_for('auth.verify_admin_email', token=token, _external=True)}" class="btn btn-verify btn-lg">Verify Email</a></p>
+                <p>Thank you!</p>
+            </div>
+        </body>
+        </html>
+        """
+        message = Message(subject, recipients=[email], html=body)
+
+        mail.send(message)
+        return True  
+    except Exception as e:
+        print(f"Error sending verification email: {e}")
+        return False  
