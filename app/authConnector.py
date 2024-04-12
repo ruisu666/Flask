@@ -16,12 +16,13 @@ auth_bp = Blueprint('auth', __name__)
 mail = Mail(app) 
 
 @auth_bp.route('/')
-def index():
-    return redirect(url_for('auth.login'))
+def landing():
+    return render_template('landing.html')
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    login_as_user = request.args.get('login_as_user')
 
     if form.validate_on_submit():
         recaptcha_response = request.form.get('g-recaptcha-response')
@@ -50,48 +51,60 @@ def login():
             return redirect(url_for('auth.login'))
 
         if connection is not None:
-            query = "SELECT adminID, password FROM admin WHERE email = %s"
-            cursor.execute(query, (email,))
-            admin_info = cursor.fetchone()
+            if login_as_user == 'true':
+                # User login
+                query = "SELECT infoID, firstname, password FROM userinfo WHERE email = %s"
+                cursor.execute(query, (email,))
+                user_info = cursor.fetchone()
 
-            if admin_info and check_password_hash(admin_info[1], password):
-                admin_id = admin_info[0]
-                session['adminID'] = admin_id
-                session['user_role'] = 'admin'
-                log_in_user(email, admin_id, 'admin') 
-                flash('Admin login successful!', 'success')
-                cursor.close()
-                close_db_connection(connection)
-                return redirect(url_for('dashboard.dashboard'))
+                if user_info and check_password_hash(user_info[2], password):
+                    info_id = user_info[0]
+                    user_firstname = user_info[1]
+                    session['infoID'] = info_id
+                    session['user_role'] = 'user'
+                    session['user_firstname'] = user_firstname
+                    log_in_user(email, info_id, 'user')
+                    flash('User login successful!', 'success')
+                    cursor.close()
+                    close_db_connection(connection)
+                    return redirect(url_for('dashboard.dashboard'))
+                elif user_info:
+                    flash('Invalid email or password', 'danger')
+                else:
+                    flash('Email is not registered', 'danger')
 
-            query = "SELECT infoID, firstname, password FROM userinfo WHERE email = %s"
-            cursor.execute(query, (email,))
-            user_info = cursor.fetchone()
+            elif login_as_user == 'false':
+                # Admin login
+                query = "SELECT adminID, password FROM admin WHERE email = %s"
+                cursor.execute(query, (email,))
+                admin_info = cursor.fetchone()
 
-            if user_info and check_password_hash(user_info[2], password):
-                info_id = user_info[0]
-                user_firstname = user_info[1]  # Fetching user's first name
-                session['infoID'] = info_id
-                session['user_role'] = 'user'
-                session['user_firstname'] = user_firstname  # Storing user's first name in the session
-                log_in_user(email, info_id, 'user')
-                flash('User login successful!', 'success')
-                cursor.close()
-                close_db_connection(connection)
-                return redirect(url_for('dashboard.dashboard'))
-            elif user_info:
-                flash('Invalid email or password', 'danger')
+                if admin_info and check_password_hash(admin_info[1], password):
+                    admin_id = admin_info[0]
+                    session['adminID'] = admin_id
+                    session['user_role'] = 'admin'
+                    log_in_user(email, admin_id, 'admin') 
+                    flash('Admin login successful!', 'success')
+                    cursor.close()
+                    close_db_connection(connection)
+                    return redirect(url_for('dashboard.dashboard'))
+                elif admin_info:
+                    flash('Invalid email or password', 'danger')
+                else:
+                    flash('Email is not registered', 'danger')
+
             else:
-                flash('Email is not registered', 'danger')
-                cursor.close()
-                close_db_connection(connection)
-                return redirect(url_for('auth.login'))
+                flash('Invalid login request', 'danger')
+
+            cursor.close()
+            close_db_connection(connection)
+            return redirect(url_for('auth.login'))
+
         else:
             flash('Error connecting to the database. Please try again later.', 'danger')
             return redirect(url_for('auth.login'))
 
-
-    return render_template('login.html', title='Log In', form=form)
+    return render_template('login.html', title='Log In', form=form, login_as_user=login_as_user)
 
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 def logout():

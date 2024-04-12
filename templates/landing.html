@@ -9,12 +9,12 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <a href="{{ url_for('auth.login_page', user_type='user') }}" class="btn btn-primary btn-block">Login as User</a>
+                    <a href="{{ url_for('auth.login', login_as_user='true')}}" class="btn btn-primary btn-block">Login as User</a>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col">
-                    <a href="{{ url_for('auth.login_page', user_type='admin') }}" class="btn btn-secondary btn-block">Login as Admin</a>
+                    <a href="{{ url_for('auth.login', login_as_user='false')}}" class="btn btn-secondary btn-block">Login as Admin</a>
                 </div>
             </div>
         </div>
