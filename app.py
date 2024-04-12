@@ -3,8 +3,6 @@ from app.authConnector import auth_bp
 from app.dashboardConnector import dashboard_bp
 from app.logsConnector import logs_bp
 from app.accountrecovery import account_recovery_bp 
-from app.profile import profile_bp
-
 from flask_mail import Mail
 import os
 
@@ -25,7 +23,6 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(logs_bp)
 app.register_blueprint(account_recovery_bp)
-app.register_blueprint(profile_bp)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=3000, debug=True)

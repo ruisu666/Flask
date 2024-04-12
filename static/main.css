@@ -95,11 +95,3 @@ body {
     width: 50%; /* Adjust this value to set the desired width */
     height: 20px; /* Adjust this value to set the desired height */
 }
-
-.bg-sand {
-  background-color: #F5DEB3; /* Sand color background */
-}
-
-.info-item {
-  border: 1px solid #dee2e6; /* Border color */
-}
