@@ -125,8 +125,6 @@ def verify_token(token):
     else:
         return False
 
-from flask import url_for
-
 def send_recovery_email(email, token, user_role):
     try:
         subject = "Reset Your Password"
@@ -164,7 +162,6 @@ def send_recovery_email(email, token, user_role):
     except Exception as e:
         print(f"Error sending recovery email: {e}")
         return False
-
 
 def hash_password(password):
     """
