@@ -24,18 +24,26 @@ def dashboard():
         
         user_firstname = session.get('user_firstname')
         
-        # QR CODE RETRIEVAL
         cursor, connection = get_cursor()
         try:
+            sql_get_user_info = "SELECT studno,lastname,firstname,email,contactnumber FROM userinfo WHERE infoID = %s"
+            cursor.execute(sql_get_user_info, (info_id,))
+            user_info = cursor.fetchone()
+            print("User Info:", user_info) 
+
+            sql_get_vehicle_info = "SELECT * FROM vehicle WHERE userID = (SELECT userID FROM user WHERE infoID = %s)"
+            cursor.execute(sql_get_vehicle_info, (info_id,))
+            vehicle_info = cursor.fetchone()
+            print("Vehicle Info:", vehicle_info) 
+
             sql_get_qr_code = "SELECT qr_code_image FROM qr_codes WHERE userID = (SELECT userID FROM user WHERE infoID = %s)"
             cursor.execute(sql_get_qr_code, (info_id,))
-            qr_code_image_base64 = cursor.fetchone()[0] #ONE QR PER USER
+            qr_code_image_base64 = cursor.fetchone()[0]
+            #print("QR Code Image:", qr_code_image_base64)  
 
-            # this code takes the encoded QR code from the database, decodes it, 
-            #turns it into a picture, reads the information from the picture, 
-            #and then translates that information into understandable words.
             decoded_objects = decode(Image.open(io.BytesIO(base64.b64decode(qr_code_image_base64))))
             decoded_data = [obj.data.decode('utf-8') for obj in decoded_objects]
+            print("Decoded Data:", decoded_data)  
 
         except Exception as e:
             flash(f'Error: {e}', 'danger')
@@ -43,7 +51,8 @@ def dashboard():
         finally:
             cursor.close()
             close_db_connection(connection)
-        return render_template('dashboard.html', user_role=user_role, user_firstname=user_firstname, qr_code_image=qr_code_image_base64, decoded_data=decoded_data)
+        
+        return render_template('dashboard.html', user_role=user_role, user_firstname=user_firstname, user_info=user_info, vehicle_info=vehicle_info, qr_code_image=qr_code_image_base64, decoded_data=decoded_data)
     else:
         flash('Please log in to access this page', 'danger')
         return redirect(url_for('auth.login'))

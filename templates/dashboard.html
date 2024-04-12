@@ -27,7 +27,7 @@
                         <!-- QR Code Image -->
                         <div class="col-md-6 text-center">
                             <div class="qr-code-image" style="background-color: #002b80; padding: 10px; border-radius: 5px;">
-                                <h3 style="color: white;">QR Code Image:</h3>
+                                <h3 style="color: white;">QR Code</h3>
                                 <img src="data:image/png;base64,{{ qr_code_image }}" alt="QR Code" class="img-fluid">
                             </div>
                         </div>
@@ -74,9 +74,35 @@
                 </div>
             </div>
             <!-- Profile Personal Information -->
-            <div class="container profile-info mt-5">
-                <h3 class="text-center">Profile Personal Information</h3>
-                <!-- Add your profile personal information content here -->
+            <div class="container profile-info mt-5 p-4 rounded">
+                <h3 class="text-center mb-4">Profile Personal Information</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-item bg-light p-2 rounded mb-2">
+                            <p><strong>Student Number:</strong> {{ user_info[0] }} <a href="#"><span class="material-icons float-right">edit</span></a></p>
+                        </div>
+                        <div class="info-item bg-light p-2 rounded mb-2">
+                            <p><strong>Last Name:</strong> {{ user_info[1] }} <a href="#"><span class="material-icons float-right">edit</span></a></p>
+                        </div>
+                        <div class="info-item bg-light p-2 rounded mb-2">
+                            <p><strong>First Name:</strong> {{ user_info[2] }} <a href="#"><span class="material-icons float-right">edit</span></a></p>
+                        </div>
+                        <div class="info-item bg-light p-2 rounded mb-2">
+                            <p><strong>Email:</strong> {{ user_info[3] }} <a href="#"><span class="material-icons float-right">edit</span></a></p>
+                        </div>
+                        <div class="info-item bg-light p-2 rounded">
+                            <p><strong>Contact Number:</strong> {{ user_info[4] }} <a href="#"><span class="material-icons float-right">edit</span></a></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item bg-light p-2 rounded mb-2">
+                            <p><strong>License Plate:</strong> {{ vehicle_info[2] }} <a href="#"><span class="material-icons float-right">edit</span></a></p>
+                        </div>
+                        <div class="info-item bg-light p-2 rounded">
+                            <p><strong>Vehicle Model:</strong> {{ vehicle_info[3] }} <a href="#"><span class="material-icons float-right">edit</span></a></p>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- Footing Content -->
             <div class="container footing-content mt-5">
