@@ -125,9 +125,10 @@ def verify_token(token):
     else:
         return False
 
-def send_recovery_email(email, token):
+from flask import url_for
+
+def send_recovery_email(email, token, user_role):
     try:
-        # Create the recovery email message
         subject = "Reset Your Password"
         body = f"""
         <!DOCTYPE html>
@@ -147,9 +148,9 @@ def send_recovery_email(email, token):
             <div class="container">
                 <h1 class="text-center">Vehicle Management System</h1>
                 <h2 class="text-center">Reset Your Password</h2>
-                <p>Dear User,</p>
+                <p>Dear {user_role},</p>
                 <p>You recently requested to reset your password. Click the following button to reset it:</p>
-                <p><a href="{url_for('account_recovery.reset_password', token=token, email=email, _external=True)}" class="btn btn-reset btn-lg">Reset Password</a></p>
+                <p><a href="{url_for('account_recovery.reset_password', token=token, email=email,user_role=user_role ,_external=True)}" class="btn btn-reset btn-lg">Reset Password</a></p>
                 <p>If you did not request a password reset, please ignore this email. This link is only valid for a limited time.</p>
                 <p>Thank you!</p>
             </div>
@@ -158,12 +159,12 @@ def send_recovery_email(email, token):
         """
         message = Message(subject, recipients=[email], html=body)
 
-        # Send the email
         mail.send(message)
         return True  
     except Exception as e:
         print(f"Error sending recovery email: {e}")
-        return False 
+        return False
+
 
 def hash_password(password):
     """

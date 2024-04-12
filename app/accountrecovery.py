@@ -12,22 +12,40 @@ def account_recovery():
     if request.method == 'POST' and form.validate_on_submit():
         email = form.email.data
         
-        connection = get_db_connection()
-        cursor = connection.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM userinfo WHERE email = %s", (email,))
-        user = cursor.fetchone()
-        close_db_connection(connection)
-
-        if user:
+        try:
+            connection = get_db_connection()
+            cursor = connection.cursor(dictionary=True)
+            
+            cursor.execute("SELECT email FROM userinfo WHERE email = %s", (email,))
+            user = cursor.fetchone()
+            
+            if user:
+                user_role = 'user'
+            else:
+                cursor.execute("SELECT email FROM admin WHERE email = %s", (email,))
+                admin = cursor.fetchone()
+                if admin:
+                    user_role = 'admin'
+                else:
+                    close_db_connection(connection)
+                    flash('This email address is not registered. Please enter a valid email address.', 'danger')
+                    return redirect(url_for('account_recovery.account_recovery'))
+            
+            close_db_connection(connection)
+            
             token = generate_verification_token()
             session['verification_token'] = token
             session['email'] = email
-            send_recovery_email(email, token)
+            session['user_role'] = user_role
+            print("Session Data:", session)
+            print("User Role:", user_role)
+            send_recovery_email(email, token, user_role)
             flash('A recovery email has been sent to your email address. Please check your inbox to reset your password.', 'success')
             return redirect(url_for('account_recovery.account_recovery'))
         
-        else:
-            flash('This email address is not registered. Please enter a valid email address.', 'danger')
+        except Exception as e:
+            print(f"Error during account recovery: {e}")
+            flash('An error occurred during account recovery. Please try again later.', 'danger')
             return redirect(url_for('account_recovery.account_recovery'))
 
     return render_template('accountrecovery.html', title='Account Recovery', form=form)
@@ -37,6 +55,8 @@ def reset_password():
     form = ResetPasswordForm()
     token = session.get('verification_token')
     email = session.get('email')
+    user_role = session.get('user_role')
+    print("User Role:", user_role)
 
     if request.method == 'POST' and form.validate_on_submit():
         password = form.password.data
@@ -51,16 +71,24 @@ def reset_password():
                 connection = get_db_connection()
                 cursor = connection.cursor()
 
-                cursor.execute("SELECT password FROM userinfo WHERE email = %s", (email,))
+                if user_role == 'user':
+                    cursor.execute("SELECT password FROM userinfo WHERE email = %s", (email,))
+                elif user_role == 'admin':
+                    cursor.execute("SELECT password FROM admin WHERE email = %s", (email,))
+                
                 current_password_hash = cursor.fetchone()[0]
 
-                # Check if the new password matches the current password
                 if check_password_hash(current_password_hash, password):
                     flash('New password cannot be the same as the current password.', 'danger')
                     return redirect(url_for('account_recovery.reset_password'))
 
                 hashed_password = generate_password_hash(password)
-                update_query = "UPDATE userinfo SET password = %s WHERE email = %s"
+
+                if user_role == 'user':
+                    update_query = "UPDATE userinfo SET password = %s WHERE email = %s"
+                elif user_role == 'admin':
+                    update_query = "UPDATE admin SET password = %s WHERE email = %s"
+
                 cursor.execute(update_query, (hashed_password, email))
                 connection.commit()
 
@@ -77,3 +105,4 @@ def reset_password():
             flash('Token or email not found in session. Please request a new password reset.', 'danger')
 
     return render_template('reset_password.html', title='Reset Password', form=form)
+
