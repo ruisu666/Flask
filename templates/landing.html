@@ -1,0 +1,23 @@
+{% extends 'layout_forms.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="content-section col-md-3" style="box-shadow: 0 0 10px rgba(0,0,0,0.2); padding: 20px; border-radius: 10px;">
+        <img src="{{ url_for('static', filename='images/neust_logo.png') }}" alt="NEUST Logo" class="img-fluid mb-4" style="width: 250px; height: auto; display: block; margin-left: auto; margin-right: auto;">
+        <p style="text-align: center; font-size: 30px; font-weight: bold;">Campus Watch</p>
+        <p style="text-align: center; font-size: 24px;">A Vehicle Management System</p>
+        <hr></hr>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <a href="{{ url_for('auth.login_page', user_type='user') }}" class="btn btn-primary btn-block">Login as User</a>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <a href="{{ url_for('auth.login_page', user_type='admin') }}" class="btn btn-secondary btn-block">Login as Admin</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
