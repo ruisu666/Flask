@@ -16,18 +16,18 @@ auth_bp = Blueprint('auth', __name__)
 mail = Mail(app) 
 
 @auth_bp.route('/')
-def index():
-    return redirect(url_for('auth.login'))
+def landing():
+    return render_template('landing.html')
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
-def login():
+@auth_bp.route('/login/user', methods=['GET', 'POST'])
+def user_login():
     form = LoginForm()
-
     if form.validate_on_submit():
+        # Verify reCAPTCHA
         recaptcha_response = request.form.get('g-recaptcha-response')
         if not recaptcha_response:
             flash('Please complete the reCAPTCHA challenge.', 'danger')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.user_login'))
         
         recaptcha_secret_key = '6LfP-rUpAAAAAMfSpH2D0HIKxOodLKtgEi8Qxzdu'  
         verification_url = 'https://www.google.com/recaptcha/api/siteverify'
@@ -38,35 +38,27 @@ def login():
         response = requests.post(verification_url, data=params)
         if not response.json().get('success'):
             flash('reCAPTCHA verification failed. Please try again.', 'danger')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.user_login'))
 
         email = form.email.data
         password = form.password.data
+
+        print("Email entered:", email)  # Debugging print
+        print("Password entered:", password)  # Debugging print
 
         try:
             cursor, connection = get_cursor()
         except AttributeError:
             flash('Error connecting to the database. Please try again later.', 'danger')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.user_login'))
 
         if connection is not None:
-            query = "SELECT adminID, password FROM admin WHERE email = %s"
-            cursor.execute(query, (email,))
-            admin_info = cursor.fetchone()
-
-            if admin_info and check_password_hash(admin_info[1], password):
-                admin_id = admin_info[0]
-                session['adminID'] = admin_id
-                session['user_role'] = 'admin'
-                log_in_user(email, admin_id, 'admin') 
-                flash('Admin login successful!', 'success')
-                cursor.close()
-                close_db_connection(connection)
-                return redirect(url_for('dashboard.dashboard'))
-
             query = "SELECT infoID, firstname, password FROM userinfo WHERE email = %s"
+            print("Query:", query)  # Debugging print
             cursor.execute(query, (email,))
             user_info = cursor.fetchone()
+
+            print("Session before login:", session)  # Debugging print
 
             if user_info and check_password_hash(user_info[2], password):
                 info_id = user_info[0]
@@ -78,6 +70,7 @@ def login():
                 flash('User login successful!', 'success')
                 cursor.close()
                 close_db_connection(connection)
+                print("User login successful!") # Debugging print
                 return redirect(url_for('dashboard.dashboard'))
             elif user_info:
                 flash('Invalid email or password', 'danger')
@@ -85,28 +78,89 @@ def login():
                 flash('Email is not registered', 'danger')
                 cursor.close()
                 close_db_connection(connection)
-                return redirect(url_for('auth.login'))
+                print("Email is not registered") # Debugging print
+                return redirect(url_for('auth.user_login'))
         else:
             flash('Error connecting to the database. Please try again later.', 'danger')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.user_login'))
+    
+    print("Form validation failed") # Debugging print
+    return render_template('user_login.html', title='User Log In', form=form)
 
+@auth_bp.route('/login/admin', methods=['GET', 'POST'])
+def admin_login():
+    form = LoginForm()
 
-    return render_template('login.html', title='Log In', form=form)
+    if form.validate_on_submit():
+        # Verify reCAPTCHA
+        recaptcha_response = request.form.get('g-recaptcha-response')
+        if not recaptcha_response:
+            flash('Please complete the reCAPTCHA challenge.', 'danger')
+            return redirect(url_for('auth.admin_login'))
+        
+        recaptcha_secret_key = '6LfP-rUpAAAAAMfSpH2D0HIKxOodLKtgEi8Qxzdu'  
+        verification_url = 'https://www.google.com/recaptcha/api/siteverify'
+        params = {
+            'secret': recaptcha_secret_key,
+            'response': recaptcha_response
+        }
+        response = requests.post(verification_url, data=params)
+        if not response.json().get('success'):
+            flash('reCAPTCHA verification failed. Please try again.', 'danger')
+            return redirect(url_for('auth.admin_login'))
+
+        email = form.email.data
+        password = form.password.data
+
+        print("Email entered:", email)  
+        print("Password entered:", password)  
+
+        try:
+            cursor, connection = get_cursor()
+        except AttributeError:
+            flash('Error connecting to the database. Please try again later.', 'danger')
+            return redirect(url_for('auth.admin_login'))
+
+        if connection is not None:
+            query = "SELECT adminID, password FROM admin WHERE email = %s"
+            print("Query:", query)  
+            cursor.execute(query, (email,))
+            admin_info = cursor.fetchone()
+
+            print("Session before login:", session) 
+
+            if admin_info and check_password_hash(admin_info[1], password):
+                admin_id = admin_info[0]
+                session['adminID'] = admin_id
+                session['user_role'] = 'admin'
+                log_in_user(email, admin_id, 'admin') 
+                flash('Admin login successful!', 'success')
+                cursor.close()
+                close_db_connection(connection)
+                print("Admin login successful!") # Debugging print
+                return redirect(url_for('dashboard.dashboard'))
+            else:
+                flash('Invalid email or password', 'danger')
+
+        else:
+            flash('Error connecting to the database. Please try again later.', 'danger')
+
+    return render_template('admin_login.html', title='Admin Log In', form=form)
 
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 def logout():
     logout_user()
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('auth.landing'))
 
-@auth_bp.route('/register', methods=['GET', 'POST'])
-def register():
+@auth_bp.route('/register/user', methods=['GET', 'POST'])
+def register_user():
     form = RegistrationForm()
 
     if form.validate_on_submit():
         recaptcha_response = request.form.get('g-recaptcha-response')
         if not recaptcha_response:
             flash('Please complete the reCAPTCHA challenge.', 'danger')
-            return redirect(url_for('auth.register'))
+            return redirect(url_for('auth.register_user'))
 
         recaptcha_secret_key = '6LfP-rUpAAAAAMfSpH2D0HIKxOodLKtgEi8Qxzdu'  
         verification_url = 'https://www.google.com/recaptcha/api/siteverify'
@@ -117,7 +171,7 @@ def register():
         response = requests.post(verification_url, data=params)
         if not response.json().get('success'):
             flash('reCAPTCHA verification failed. Please try again.', 'danger')
-            return redirect(url_for('auth.register'))
+            return redirect(url_for('auth.register_user'))
 
         password_hash = generate_password_hash(form.password.data) 
 
@@ -152,9 +206,9 @@ def register():
         flash(flash_message, 'verification_success_message')
         flash(flash_link, 'flash_link')
 
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.user_login'))
 
-    return render_template('register.html', form=form)
+    return render_template('register_user.html', form=form)
 
 @auth_bp.route('/resend_verification_email', methods=['GET'])
 def resend_verification_email():
@@ -173,7 +227,7 @@ def resend_verification_email():
     else:
         flash('No email address found in the registration data. Please try registering again.', 'danger')
 
-    return redirect(url_for('auth.register'))
+    return redirect(url_for('auth.register_user'))
 
 @auth_bp.route('/verify_email/<token>', methods=['GET'])
 def verify_email(token):
@@ -193,7 +247,7 @@ def verify_email(token):
                     registration_data['firstname'],
                     registration_data['email'],
                     registration_data['contactnumber'],
-                    password_hash  # Store the hashed password
+                    password_hash  
                 ))
                 connection.commit()
 
@@ -203,13 +257,10 @@ def verify_email(token):
                 cursor.execute(sql_vehicle, (user_id, registration_data['licenseplate'], registration_data['model']))
                 connection.commit()
 
-                # Generate QR code data
                 qr_data = f"Studno: {registration_data['studno']}\nLastname: {registration_data['lastname']}\nFirstname: {registration_data['firstname']}\nEmail: {registration_data['email']}\nContact Number: {registration_data['contactnumber']}\nLicense Plate: {registration_data['licenseplate']}\nVehicle Model: {registration_data['model']}"
 
-                # Generate QR code image using the generate_qr_code function
                 qr_image_str = generate_qr_code(qr_data)
 
-                # Store the Base64 string in the database
                 sql_qr_code = "INSERT INTO qr_codes (userID, qr_code_image) VALUES (%s, %s)"
                 cursor.execute(sql_qr_code, (user_id, qr_image_str))
                 connection.commit()
@@ -218,18 +269,18 @@ def verify_email(token):
                 cursor.close()
                 close_db_connection(connection)
                 session.pop('registration_data')
-                return redirect(url_for('auth.login'))
+                return redirect(url_for('auth.user_login'))
             except mysql.connector.Error as err:
                 flash('Error registering user or vehicle: {}'.format(err), 'danger')
                 cursor.close()
                 close_db_connection(connection)
-                return redirect(url_for('auth.login'))
+                return redirect(url_for('auth.user_login'))
         else:
             flash('Registration data not found. Please try registering again.', 'danger')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.user_login'))
     else:
         flash('Invalid or expired verification token.', 'danger')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.user_login'))
 
 def generate_qr_code(data):
     qr = qrcode.QRCode(

@@ -6,8 +6,8 @@
                 <div class="content-section" style="box-shadow: 0 0 10px rgba(0,0,0,0.2); padding: 20px; border-radius: 10px;">
                     <img src="{{ url_for('static', filename='images/neust_logo.png') }}" alt="NEUST Logo" class="img-fluid mb-4 mx-auto d-block" style="width: 250px; height: auto;">
                     <h2 class="text-center mb-4">Vehicle Management System</h2>
-                    <h3 class="text-center mb-4">Registration</h3>
-                    <form id="registrationForm" method="POST" action="{{ url_for('auth.register') }}" novalidate>
+                    <h3 class="text-center mb-4">User Registration</h3>
+                    <form id="registrationForm" method="POST" action="{{ url_for('auth.register_user') }}" novalidate>
                         {{ form.hidden_tag() }}
                         <legend class="border-bottom mb-4" style="text-align: center;"></legend>
                         <div class="col-md-20">
@@ -195,7 +195,7 @@
                             <div class="col-md-8">
                                 <div class="text-center mt-3">
                                     <legend class="border-bottom mb-4" style="text-align: center;"></legend>
-                                    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+                                    <p>Already have an account? <a href="{{ url_for('auth.user_login') }}">Login</a></p>
                                 </div>
                             </div>
                     </div>

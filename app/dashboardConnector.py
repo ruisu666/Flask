@@ -14,13 +14,13 @@ def dashboard():
         adminID = session.get('adminID')
         if not adminID:
             flash('Please log in to access this page', 'danger')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.landing'))
         return render_template('dashboard.html', user_role=user_role)
     elif user_role == 'user':
         info_id = session.get('infoID')
         if not info_id:
             flash('Please log in to access this page', 'danger')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.landing'))
         
         user_firstname = session.get('user_firstname')
         
@@ -47,7 +47,7 @@ def dashboard():
 
         except Exception as e:
             flash(f'Error: {e}', 'danger')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.landing'))
         finally:
             cursor.close()
             close_db_connection(connection)
@@ -55,4 +55,4 @@ def dashboard():
         return render_template('dashboard.html', user_role=user_role, user_firstname=user_firstname, user_info=user_info, vehicle_info=vehicle_info, qr_code_image=qr_code_image_base64, decoded_data=decoded_data)
     else:
         flash('Please log in to access this page', 'danger')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.landing'))

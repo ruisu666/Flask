@@ -53,7 +53,6 @@ def get_current_user_data():
 
 def send_verification_email(email, token):
     try:
-        # Create the verification email message
         subject = "Verify Your Email Address"
         body = f"""
         <!DOCTYPE html>
@@ -109,12 +108,11 @@ def send_verification_email(email, token):
         """
         message = Message(subject, recipients=[email], html=body)
 
-        # Send the email
         mail.send(message)
-        return True  # Email sent successfully
+        return True  
     except Exception as e:
         print(f"Error sending verification email: {e}")
-        return False  # Failed to send email
+        return False  
     
 def generate_verification_token():
     token = secrets.token_urlsafe(20)

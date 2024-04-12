@@ -51,7 +51,6 @@ def reset_password():
                 connection = get_db_connection()
                 cursor = connection.cursor()
 
-                # Retrieve current hashed password from the database
                 cursor.execute("SELECT password FROM userinfo WHERE email = %s", (email,))
                 current_password_hash = cursor.fetchone()[0]
 
@@ -60,7 +59,6 @@ def reset_password():
                     flash('New password cannot be the same as the current password.', 'danger')
                     return redirect(url_for('account_recovery.reset_password'))
 
-                # Update the password in the database
                 hashed_password = generate_password_hash(password)
                 update_query = "UPDATE userinfo SET password = %s WHERE email = %s"
                 cursor.execute(update_query, (hashed_password, email))
@@ -69,7 +67,7 @@ def reset_password():
                 flash('Password updated successfully.', 'success')
                 session.pop('verification_token')
                 session.pop('email')
-                return redirect(url_for('auth.login'))
+                return redirect(url_for('auth.landing'))
             except Exception as e:
                 print(f"Error updating password: {e}")
                 flash('An error occurred while updating your password. Please try again later.', 'danger')
