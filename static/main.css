@@ -129,3 +129,8 @@ body {
   border: 8px solid #002b80; /* Border style */
   border-radius: 5px; /* Border radius */
 }
+
+        /* Override default modal backdrop */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}

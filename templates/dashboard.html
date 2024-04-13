@@ -5,96 +5,126 @@
     <main>
         {% if user_role == 'admin' %}
 
-    <div class="container">
-    <h2 class="text-center mt-5">Admin Dashboard</h2>
-    <h2 class="text-center">Hello {{ admin_firstname }}!</h2>
-    <div class="row justify-content-center">
-        <div class="col-9 text-center">
-            <img id="qrImage" src="{{ url_for('static', filename='images/qrScanner.jpg') }}" class="img-fluid" style="max-width: 100%;">
-            <video id="qrVideo" class="img-fluid" style="max-width: 100%; display: none;"></video>
-            <canvas id="qrCanvas" style="display: none;"></canvas>
-        </div>
-        <div class="col-9 text-center">
-            <button id="scanButton" class="btn btn-primary mt-3">Scan QR</button>
-        </div>
-        <div class="col-9 text-center">
-            <div id="qrDataContainer">
-                <ul id="qrDataList" class="list-group">
-                    <!-- QR code data will be dynamically added here -->
-                </ul>
+        <div class="container">
+            <h2 class="text-center mt-5">Admin Dashboard</h2>
+            <h2 class="text-center">Hello {{ admin_firstname }}!</h2>
+            <div class="row justify-content-center">
+                <div class="col-9 text-center">
+                    <img id="qrImage" src="{{ url_for('static', filename='images/qrScanner.jpg') }}" class="img-fluid" style="max-width: 100%;">
+                    <video id="qrVideo" class="img-fluid" style="max-width: 100%; display: none;"></video>
+                    <canvas id="qrCanvas" style="display: none;"></canvas>
+                </div>
+                <div class="col-9 text-center">
+                    <button id="scanButton" class="btn btn-primary mt-3">Scan QR</button>
+                </div>
+            </div>
+        </div> 
+        <!-- Modal -->
+        <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="qrModalLabel">QR Code Data</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul id="modalQRDataList" class="list-group">
+                            <!-- QR code data will be dynamically added here -->
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" id="timeInButton">Time In</button>
+                            <button type="button" class="btn btn-primary" id="timeOutButton">Time Out</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-
-<script>
-    const qrImage = document.getElementById('qrImage');
-    const qrVideo = document.getElementById('qrVideo');
-    const qrCanvas = document.getElementById('qrCanvas');
-    const scanButton = document.getElementById('scanButton');
-    const qrDataList = document.getElementById('qrDataList');
-
-    // Function to activate the camera and scan for QR codes
-    async function scanQR() {
-        try {
-            // Access the camera
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            qrVideo.srcObject = stream;
-            qrVideo.play();
-
-            // Toggle visibility of image and video elements
-            qrImage.style.display = 'none';
-            qrVideo.style.display = 'block';
-
-            // Wait for the video metadata to load
-            qrVideo.addEventListener('loadedmetadata', function() {
-                // Set up the canvas for capturing image data
-                const context = qrCanvas.getContext('2d');
-                qrCanvas.width = qrVideo.videoWidth;
-                qrCanvas.height = qrVideo.videoHeight;
-
-                // Continuously capture video frames and attempt to decode QR code
-                function captureFrame() {
-                    context.drawImage(qrVideo, 0, 0, qrCanvas.width, qrCanvas.height);
-                    const imageData = context.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
-                    const code = jsQR(imageData.data, imageData.width, imageData.height);
-                    if (code) {
-                        // Display QR code data in list
-                        displayQRData(code.data);
-                    }
-                    requestAnimationFrame(captureFrame);
+        <script>
+            const qrImage = document.getElementById('qrImage');
+            const qrVideo = document.getElementById('qrVideo');
+            const qrCanvas = document.getElementById('qrCanvas');
+            const scanButton = document.getElementById('scanButton');
+        
+            // Function to activate the camera and scan for QR codes
+            async function scanQR() {
+                try {
+                    // Access the camera
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    qrVideo.srcObject = stream;
+                    qrVideo.play();
+        
+                    // Toggle visibility of image and video elements
+                    qrImage.style.display = 'none';
+                    qrVideo.style.display = 'block';
+        
+                    // Wait for the video metadata to load
+                    qrVideo.addEventListener('loadedmetadata', function() {
+                        // Set up the canvas for capturing image data
+                        const context = qrCanvas.getContext('2d');
+                        qrCanvas.width = qrVideo.videoWidth;
+                        qrCanvas.height = qrVideo.videoHeight;
+        
+                        // Continuously capture video frames and attempt to decode QR code
+                        function captureFrame() {
+                            context.drawImage(qrVideo, 0, 0, qrCanvas.width, qrCanvas.height);
+                            const imageData = context.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
+                            const code = jsQR(imageData.data, imageData.width, imageData.height);
+                            if (code) {
+                                // Display QR code data in modal
+                                displayQRData(code.data);
+                            }
+                            requestAnimationFrame(captureFrame);
+                        }
+        
+                        // Start capturing frames
+                        captureFrame();
+                    });
+                } catch (error) {
+                    console.error('Error accessing camera:', error);
                 }
-
-                // Start capturing frames
-                captureFrame();
-            });
-        } catch (error) {
-            console.error('Error accessing camera:', error);
-        }
-    }
-
-    // Function to display QR code data in list
-    // Function to display QR code data in list
-    function displayQRData(data) {
-        // Clear previous data only if there's new data available
-        if (data) {
-            qrDataList.innerHTML = '';
-        }
-
-        // Split data into lines and add to list
-        const lines = data.split('\n');
-        lines.forEach(line => {
-            if (line.trim() !== '') {
-                const listItem = document.createElement('li');
-                listItem.className = 'list-group-item';
-                listItem.textContent = line;
-                qrDataList.appendChild(listItem);
             }
-        });
-    }
-    // Event listener for the scan button
-    scanButton.addEventListener('click', scanQR);
-</script>
+        
+            // Function to display QR code data in modal
+            function displayQRData(data) {
+                // Clear previous data
+                const modalQRDataList = document.getElementById('modalQRDataList');
+                modalQRDataList.innerHTML = '';
+        
+                // Split data into lines and add to list
+                const lines = data.split('\n');
+                lines.forEach(line => {
+                    if (line.trim() !== '') {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'list-group-item';
+                        listItem.textContent = line;
+                        modalQRDataList.appendChild(listItem);
+                    }
+                });
+        
+                // Show the modal
+                const qrModal = new bootstrap.Modal(document.getElementById('qrModal'), {});
+                qrModal.show();
+            }
+        
+            // Event listener for the scan button
+            scanButton.addEventListener('click', scanQR);
+        
+            // Event listener for the Time In button
+            document.getElementById('timeInButton').addEventListener('click', function() {
+                // Add your logic here for the Time In functionality
+                console.log('Time In button clicked');
+            });
+        
+            // Event listener for the Time Out button
+            document.getElementById('timeOutButton').addEventListener('click', function() {
+                // Add your logic here for the Time Out functionality
+                console.log('Time Out button clicked');
+            });
+        
+        </script>
+        
 
         {% elif user_role == 'user' %}
             <div class="container user-dashboard">
