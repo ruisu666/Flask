@@ -10,9 +10,6 @@ dashboard_bp = Blueprint('dashboard', __name__)
 @dashboard_bp.route('/dashboard')
 def dashboard():
     user_role = session.get('user_role')
-    decoded_data = session.get('decoded_data', '')  # Retrieve decoded data from session
-    processed_route = f"/process_qr_code?qr_data={decoded_data}" if decoded_data else ""  # Define the processed route
-    print("Decoded Data Admin:", decoded_data)
     #ADMIN SIDE
     if user_role == 'admin':
         adminID = session.get('adminID')
@@ -21,7 +18,7 @@ def dashboard():
             return redirect(url_for('auth.landing'))
         admin_firstname = session.get('admin_firstname')
 
-        return render_template('dashboard.html', user_role=user_role, admin_firstname=admin_firstname, decoded_data=decoded_data, processed_route=processed_route)
+        return render_template('dashboard.html', user_role=user_role, admin_firstname=admin_firstname)
     
     #USER SIDE
     elif user_role == 'user':
@@ -64,11 +61,3 @@ def dashboard():
     else:
         flash('Please log in to access this page', 'danger')
         return redirect(url_for('auth.landing'))
-    
-@dashboard_bp.route('/process_qr_code')
-def process_qr_code():
-    qr_data = request.args.get('qr_data')
-    # Store the QR code data in session
-    session['decoded_data'] = qr_data
-    # Redirect back to the dashboard
-    return redirect(url_for('dashboard.dashboard'))
