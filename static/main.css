@@ -122,3 +122,10 @@ body {
   border-top-right-radius: 20px; /* Set border radius for top right corner of table header cell */
 }
 
+#cameraPlaceholder {
+  width: 500px;
+  height: auto;
+  max-width: 100%;
+  border: 8px solid #002b80; /* Border style */
+  border-radius: 5px; /* Border radius */
+}

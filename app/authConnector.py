@@ -23,7 +23,6 @@ def landing():
 def user_login():
     form = LoginForm()
     if form.validate_on_submit():
-        # Verify reCAPTCHA
         recaptcha_response = request.form.get('g-recaptcha-response')
         if not recaptcha_response:
             flash('Please complete the reCAPTCHA challenge.', 'danger')
@@ -43,12 +42,13 @@ def user_login():
         email = form.email.data
         password = form.password.data
 
-        print("Email entered:", email)  # Debugging print
-        print("Password entered:", password)  # Debugging print
+        print("Email entered:", email)  
+        print("Password entered:", password)  
 
         try:
             cursor, connection = get_cursor()
-        except AttributeError:
+        except AttributeError as e:
+            print("Error connecting to the database:", e)
             flash('Error connecting to the database. Please try again later.', 'danger')
             return redirect(url_for('auth.user_login'))
 
@@ -60,31 +60,35 @@ def user_login():
 
             print("Session before login:", session)  
 
-            if user_info and check_password_hash(user_info[2], password):
-                info_id = user_info[0]
-                user_firstname = user_info[1]  
-                session['infoID'] = info_id
-                session['user_role'] = 'user'
-                session['user_firstname'] = user_firstname  
-                log_in_user(email, info_id, 'user')
-                flash('User login successful!', 'success')
-                cursor.close()
-                close_db_connection(connection)
-                print("User login successful!") 
-                return redirect(url_for('dashboard.dashboard'))
-            elif user_info:
-                flash('Invalid email or password', 'danger')
+            if user_info:
+                stored_password_hash = user_info[2]
+                if check_password_hash(stored_password_hash, password):
+                    info_id = user_info[0]
+                    user_firstname = user_info[1]  
+                    session['infoID'] = info_id
+                    session['user_role'] = 'user'
+                    session['user_firstname'] = user_firstname  
+                    log_in_user(email, info_id, 'user')
+                    flash('User login successful!', 'success')
+                    cursor.close()
+                    close_db_connection(connection)
+                    print("User login successful!") 
+                    return redirect(url_for('dashboard.dashboard'))
+                else:
+                    print("Invalid password for email:", email) 
+                    flash('Invalid email or password', 'danger')
             else:
+                print("Email is not registered:", email)  
                 flash('Email is not registered', 'danger')
-                cursor.close()
-                close_db_connection(connection)
-                print("Email is not registered") 
-                return redirect(url_for('auth.user_login'))
+
+            cursor.close()
+            close_db_connection(connection)
         else:
             flash('Error connecting to the database. Please try again later.', 'danger')
-            return redirect(url_for('auth.user_login'))
-    
-    print("Form validation failed") # Debugging print
+
+    else:
+        print("Form validation failed:", form.errors) 
+
     return render_template('user_login.html', title='User Log In', form=form)
 
 @auth_bp.route('/login/admin', methods=['GET', 'POST'])
@@ -117,7 +121,8 @@ def admin_login():
 
         try:
             cursor, connection = get_cursor()
-        except AttributeError:
+        except AttributeError as e:
+            print("Error connecting to the database:", e)  
             flash('Error connecting to the database. Please try again later.', 'danger')
             return redirect(url_for('auth.admin_login'))
 
@@ -129,21 +134,29 @@ def admin_login():
 
             print("Session before login:", session) 
 
-            if admin_info and check_password_hash(admin_info[1], password):
-                admin_id = admin_info[0]
-                admin_firstname = admin_info[2]
-                session['adminID'] = admin_id
-                session['user_role'] = 'admin'
-                session['admin_firstname'] = admin_firstname
-                log_in_user(email, admin_id, 'admin') 
-                flash('Admin login successful!', 'success')
-                cursor.close()
-                close_db_connection(connection)
-                print("Admin login successful!") 
-                return redirect(url_for('dashboard.dashboard'))
+            if admin_info:
+                stored_password_hash = admin_info[1]
+                if check_password_hash(stored_password_hash, password):
+                    admin_id = admin_info[0]
+                    admin_firstname = admin_info[2]
+                    session['adminID'] = admin_id
+                    session['user_role'] = 'admin'
+                    session['admin_firstname'] = admin_firstname
+                    log_in_user(email, admin_id, 'admin') 
+                    flash('Admin login successful!', 'success')
+                    cursor.close()
+                    close_db_connection(connection)
+                    print("Admin login successful!") 
+                    return redirect(url_for('dashboard.dashboard'))
+                else:
+                    print("Invalid password for email:", email)  
+                    flash('Invalid email or password', 'danger')
             else:
+                print("Email is not registered:", email)  
                 flash('Invalid email or password', 'danger')
 
+            cursor.close()
+            close_db_connection(connection)
         else:
             flash('Error connecting to the database. Please try again later.', 'danger')
 
