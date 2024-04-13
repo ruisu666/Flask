@@ -41,10 +41,10 @@ def dashboard():
             vehicle_info = cursor.fetchone()
             print("Vehicle Info:", vehicle_info) 
 
-            sql_get_qr_code = "SELECT qr_code_image FROM qr_codes WHERE userID = (SELECT userID FROM user WHERE infoID = %s)"
+            sql_get_qr_code = "SELECT qr_code_image, userID FROM qr_codes WHERE userID = (SELECT userID FROM user WHERE infoID = %s)"
             cursor.execute(sql_get_qr_code, (info_id,))
-            qr_code_image_base64 = cursor.fetchone()[0]
-            #print("QR Code Image:", qr_code_image_base64)  
+            qr_code_image_base64, user_id = cursor.fetchone()
+            print("QR Code Image:", qr_code_image_base64)  
 
             decoded_objects = decode(Image.open(io.BytesIO(base64.b64decode(qr_code_image_base64))))
             decoded_data = [obj.data.decode('utf-8') for obj in decoded_objects]
@@ -56,6 +56,7 @@ def dashboard():
         finally:
             cursor.close()
             close_db_connection(connection)
+
         
         return render_template('dashboard.html', user_role=user_role, user_firstname=user_firstname, user_info=user_info, vehicle_info=vehicle_info, qr_code_image=qr_code_image_base64, decoded_data=decoded_data)
     else:

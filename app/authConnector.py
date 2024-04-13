@@ -192,7 +192,7 @@ def register_user():
 
         session['verification_token'] = token
 
-        send_admin_verification_email(form.emailaddress.data, token)
+        send_user_verification_email(form.emailaddress.data, token)
 
         print("Student Number:", form.studno.data)
         print("First Name:", form.firstname.data)
@@ -203,7 +203,7 @@ def register_user():
         print("License Plate Number:", form.license_number.data)
         print("Vehicle Model:", form.vehicle_model.data)
         flash_message = 'A verification email has been sent to your email address. Please verify your email to complete registration.'
-        flash_link = url_for('auth.resend_verification_email')
+        flash_link = url_for('auth.resend_user_verification_email')
         flash(flash_message, 'verification_success_message')
         flash(flash_link, 'flash_link')
 
@@ -223,7 +223,7 @@ def resend_user_verification_email():
         send_user_verification_email(email_address, token)
 
         flash('A verification email has been resent to your email address.', 'success')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.user_login'))
 
     else:
         flash('No email address found in the registration data. Please try registering again.', 'danger')
@@ -258,7 +258,8 @@ def verify_user_email(token):
                 cursor.execute(sql_vehicle, (user_id, registration_data['licenseplate'], registration_data['model']))
                 connection.commit()
 
-                qr_data = f"Studno: {registration_data['studno']}\nLastname: {registration_data['lastname']}\nFirstname: {registration_data['firstname']}\nEmail: {registration_data['email']}\nContact Number: {registration_data['contactnumber']}\nLicense Plate: {registration_data['licenseplate']}\nVehicle Model: {registration_data['model']}"
+                # Include userID in QR data
+                qr_data = f"User ID: {user_id}\nStudent Number: {registration_data['studno']}\nLastname: {registration_data['lastname']}\nFirstname: {registration_data['firstname']}\nEmail: {registration_data['email']}\nContact Number: {registration_data['contactnumber']}\nLicense Plate: {registration_data['licenseplate']}\nVehicle Model: {registration_data['model']}"
 
                 qr_image_str = generate_qr_code(qr_data)
 
