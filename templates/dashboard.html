@@ -4,9 +4,8 @@
     </header>
     <main>
         {% if user_role == 'admin' %}
-
+    </br></br></br></br></br>
         <div class="container">
-            <h2 class="text-center mt-5">Admin Dashboard</h2>
             <h2 class="text-center">Hello {{ admin_firstname }}!</h2>
             <div class="row justify-content-center">
                 <div class="col-9 text-center">
@@ -18,35 +17,21 @@
                     <button id="scanButton" class="btn btn-primary mt-3">Scan QR</button>
                 </div>
             </div>
-        </div> 
-        <!-- Modal -->
-        <!-- Modal -->
-        <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="qrModalLabel">QR Code Data</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p id="modalInstructions"></p> <!-- Element for displaying instructions -->
-                        <ul id="modalQRDataList" class="list-group">
-                            <!-- QR code data will be dynamically added here -->
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary" id="timeInButton">Time In</button>
-                            <button type="button" class="btn btn-primary" id="timeOutButton">Time Out</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
+        <div class="container" id="modalContainer" style="display: none;">
+            <h5 class="modal-title text-center mb-4" id="qrModalLabel">QR Code Data</h5>
+            <p class="text-center mb-3" id="modalInstructions"></p>
+            <ul id="modalQRDataList" class="list-group mb-3"></ul>
+            <div class="text-center">
+                <button type="button" class="btn btn-primary mr-3" id="timeInButton">Time In</button>
+                <button type="button" class="btn btn-primary" id="timeOutButton">Time Out</button>
+            </br></br>
+            </div>
+        </div>        
         <form id="timeForm" method="post">
             <input type="hidden" id="qrDataInput" name="qrData">
             <!-- Other form fields here -->
-        </form>
+        </form>   
         <script>
             const qrCanvas = document.getElementById('qrCanvas');
             const scanButton = document.getElementById('scanButton');
@@ -80,7 +65,7 @@
                             const code = jsQR(imageData.data, imageData.width, imageData.height);
                             if (code) {
                                 qrData = code.data; // Store QR code data
-                                // Decode QR code and display data in modal
+                                // Decode QR code and display data
                                 displayQRData(qrData);
                             }
                             requestAnimationFrame(captureFrame);
@@ -97,12 +82,15 @@
             // Event listener for the scan button
             scanButton.addEventListener('click', scanQR);
         
-            // Function to display QR code data in modal
+            // Function to display scanned QR data and buttons
             function displayQRData(data) {
+                // Show the modal container
+                document.getElementById('modalContainer').style.display = 'block';
+
                 // Clear previous data
                 const modalQRDataList = document.getElementById('modalQRDataList');
                 modalQRDataList.innerHTML = '';
-        
+
                 // Split data into lines and add to list
                 const lines = data.split('\n');
                 lines.forEach(line => {
@@ -113,72 +101,73 @@
                         modalQRDataList.appendChild(listItem);
                     }
                 });
-        
-                // Show the modal
-                const qrModal = new bootstrap.Modal(document.getElementById('qrModal'), {});
-                qrModal.show();
             }
-        
-        // Event listener for the Time In button
-        document.getElementById('timeInButton').addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent default form submission behavior
-            if (qrData) {
-                // Pass QR data to the form and submit for Time In asynchronously
-                submitFormData('/time_in_instructions', qrData);
-            } else {
-                alert('Please scan a QR code before clicking Time In.');
-            }
-        });
 
-        // Event listener for the Time Out button
-        document.getElementById('timeOutButton').addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent default form submission behavior
-            if (qrData) {
-                // Pass QR data to the form and submit for Time Out asynchronously
-                submitFormData('/time_out_instructions', qrData);
-            } else {
-                alert('Please scan a QR code before clicking Time Out.');
-            }
-        });
-
-        // Function to submit form data asynchronously
-        function submitFormData(url, qrData) {
-            const formData = new FormData();
-            formData.append('qrData', qrData);
-
-            fetch(url, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                // Function to display success SweetAlert
+                function showSuccessAlert(message) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: message,
+                    });
                 }
-                return response.text();
-            })
-            .then(data => {
-                // Handle the response data (if needed)
-                console.log(data);
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-            });
-        }
-        
-            // Function to display instructions in the modal
-            function displayInstructions(instructions) {
-                // Clear previous instructions
-                const modalInstructions = document.getElementById('modalInstructions');
-                modalInstructions.textContent = instructions;
-        
-                // Show the modal
-                const qrModal = new bootstrap.Modal(document.getElementById('qrModal'), {});
-                qrModal.show();
-            }
-        
+
+                // Function to display error SweetAlert
+                function showErrorAlert(message) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: message,
+                    });
+                }
+
+                // Event listener for the Time In button
+                document.getElementById('timeInButton').addEventListener('click', function (event) {
+                    event.preventDefault(); // Prevent default form submission behavior
+                    if (qrData) {
+                        // Pass QR data to the form and submit for Time In asynchronously
+                        submitFormData('/time_in_instructions', qrData);
+                    } else {
+                        showErrorAlert('Please scan a QR code before clicking Time In.');
+                    }
+                });
+
+                // Event listener for the Time Out button
+                document.getElementById('timeOutButton').addEventListener('click', function (event) {
+                    event.preventDefault(); // Prevent default form submission behavior
+                    if (qrData) {
+                        // Pass QR data to the form and submit for Time Out asynchronously
+                        submitFormData('/time_out_instructions', qrData);
+                    } else {
+                        showErrorAlert('Please scan a QR code before clicking Time Out.');
+                    }
+                });
+
+                // Function to submit form data asynchronously
+                function submitFormData(url, qrData) {
+                    const formData = new FormData();
+                    formData.append('qrData', qrData);
+
+                    fetch(url, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        console.log(data);
+                        showSuccessAlert('Action successful!');
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                        showErrorAlert('There was an error processing your request.');
+                    });
+                }
         </script>
-        
-        
 
         {% elif user_role == 'user' %}
             <div class="container user-dashboard">
