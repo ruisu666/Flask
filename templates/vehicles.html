@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<h1>Vehicles</h1>
+
+<div class="table-responsive">
+  <table class="table custom-table">
+    <thead class="thead-dark rounded-top">
+      <tr>
+        <th class="rounded-top-left">#</th>
+        <th>Model</th>
+        <th>License Plate</th>
+        <th class="rounded-top-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for vehicle in vehicles %}
+      <tr>
+        <td>{{ vehicle.userID }}</td>
+        <td>{{ vehicle.model }}</td>
+        <td>{{ vehicle.licenseplate }}</td>
+        <td> <!-- Actions column placeholder, add actions/buttons here if needed --> </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

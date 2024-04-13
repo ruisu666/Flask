@@ -96,10 +96,29 @@ body {
     height: 20px; /* Adjust this value to set the desired height */
 }
 
-.bg-sand {
-  background-color: #F5DEB3; /* Sand color background */
+.custom-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 2px solid black; /* Set black borders for the table */
+  border-radius: 5px; /* Set border radius for the table */
 }
 
-.info-item {
-  border: 1px solid #dee2e6; /* Border color */
+.custom-table th, .custom-table td {
+  border: 0px solid black; /* Set black borders for table cells */
+  background-color: white; /* Set white background for table cells */
+  border-radius: 0; /* Reset border radius for table cells */
 }
+
+.custom-table .thead-dark th {
+  background-color: white; /* Override dark background for table header */
+  color: black; /* Set text color for table header */
+}
+
+.rounded-top-left {
+  border-top-left-radius: 20px; /* Set border radius for top left corner of table header cell */
+}
+
+.rounded-top-right {
+  border-top-right-radius: 20px; /* Set border radius for top right corner of table header cell */
+}
+
