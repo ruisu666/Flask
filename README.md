@@ -24,6 +24,8 @@ To run this program, you need to follow a set of requirements first;
 
    pip install opencv-python pyzbar
 
+   pip install pyOpenSSL
+
 
 
 
