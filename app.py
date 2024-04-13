@@ -8,6 +8,7 @@ from app.accountrecovery import account_recovery_bp
 from app.profile import profile_bp
 from app.vehicles import vehicles_bp
 from flask_mail import Mail
+from app.record import record_bp
 
 # Get the directory of the current script
 current_dir = os.path.dirname(__file__)
@@ -54,6 +55,7 @@ app.register_blueprint(logs_bp)
 app.register_blueprint(account_recovery_bp)
 app.register_blueprint(profile_bp)
 app.register_blueprint(vehicles_bp)
+app.register_blueprint(record_bp)
 
 if __name__ == "__main__":
     # Use the SSL certificate and private key files

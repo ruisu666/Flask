@@ -20,6 +20,7 @@
             </div>
         </div> 
         <!-- Modal -->
+        <!-- Modal -->
         <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -28,6 +29,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <p id="modalInstructions"></p> <!-- Element for displaying instructions -->
                         <ul id="modalQRDataList" class="list-group">
                             <!-- QR code data will be dynamically added here -->
                         </ul>
@@ -41,26 +43,31 @@
                 </div>
             </div>
         </div>
+        <form id="timeForm" method="post">
+            <input type="hidden" id="qrDataInput" name="qrData">
+            <!-- Other form fields here -->
+        </form>
         <script>
-            const qrImage = document.getElementById('qrImage');
-            const qrVideo = document.getElementById('qrVideo');
             const qrCanvas = document.getElementById('qrCanvas');
             const scanButton = document.getElementById('scanButton');
+            let qrData = null; // Variable to store QR code data
         
             // Function to activate the camera and scan for QR codes
             async function scanQR() {
                 try {
                     // Access the camera
                     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    const qrVideo = document.getElementById('qrVideo');
                     qrVideo.srcObject = stream;
                     qrVideo.play();
         
                     // Toggle visibility of image and video elements
+                    const qrImage = document.getElementById('qrImage');
                     qrImage.style.display = 'none';
                     qrVideo.style.display = 'block';
         
                     // Wait for the video metadata to load
-                    qrVideo.addEventListener('loadedmetadata', function() {
+                    qrVideo.addEventListener('loadedmetadata', function () {
                         // Set up the canvas for capturing image data
                         const context = qrCanvas.getContext('2d');
                         qrCanvas.width = qrVideo.videoWidth;
@@ -72,8 +79,9 @@
                             const imageData = context.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
                             const code = jsQR(imageData.data, imageData.width, imageData.height);
                             if (code) {
-                                // Display QR code data in modal
-                                displayQRData(code.data);
+                                qrData = code.data; // Store QR code data
+                                // Decode QR code and display data in modal
+                                displayQRData(qrData);
                             }
                             requestAnimationFrame(captureFrame);
                         }
@@ -85,6 +93,9 @@
                     console.error('Error accessing camera:', error);
                 }
             }
+        
+            // Event listener for the scan button
+            scanButton.addEventListener('click', scanQR);
         
             // Function to display QR code data in modal
             function displayQRData(data) {
@@ -108,22 +119,65 @@
                 qrModal.show();
             }
         
-            // Event listener for the scan button
-            scanButton.addEventListener('click', scanQR);
-        
-            // Event listener for the Time In button
-            document.getElementById('timeInButton').addEventListener('click', function() {
-                // Add your logic here for the Time In functionality
-                console.log('Time In button clicked');
+        // Event listener for the Time In button
+        document.getElementById('timeInButton').addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent default form submission behavior
+            if (qrData) {
+                // Pass QR data to the form and submit for Time In asynchronously
+                submitFormData('/time_in_instructions', qrData);
+            } else {
+                alert('Please scan a QR code before clicking Time In.');
+            }
+        });
+
+        // Event listener for the Time Out button
+        document.getElementById('timeOutButton').addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent default form submission behavior
+            if (qrData) {
+                // Pass QR data to the form and submit for Time Out asynchronously
+                submitFormData('/time_out_instructions', qrData);
+            } else {
+                alert('Please scan a QR code before clicking Time Out.');
+            }
+        });
+
+        // Function to submit form data asynchronously
+        function submitFormData(url, qrData) {
+            const formData = new FormData();
+            formData.append('qrData', qrData);
+
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(data => {
+                // Handle the response data (if needed)
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
             });
+        }
         
-            // Event listener for the Time Out button
-            document.getElementById('timeOutButton').addEventListener('click', function() {
-                // Add your logic here for the Time Out functionality
-                console.log('Time Out button clicked');
-            });
+            // Function to display instructions in the modal
+            function displayInstructions(instructions) {
+                // Clear previous instructions
+                const modalInstructions = document.getElementById('modalInstructions');
+                modalInstructions.textContent = instructions;
+        
+                // Show the modal
+                const qrModal = new bootstrap.Modal(document.getElementById('qrModal'), {});
+                qrModal.show();
+            }
         
         </script>
+        
         
 
         {% elif user_role == 'user' %}
