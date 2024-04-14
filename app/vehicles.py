@@ -1,31 +1,24 @@
 import mysql.connector
-from flask import flash, render_template, Blueprint, session, request, send_file
+from flask import flash, render_template, Blueprint
 from app.utils import close_db_connection, get_db_connection
+
 
 vehicles_bp = Blueprint('vehicles', __name__)
 
 @vehicles_bp.route('/myvehicles')
 def vehicles():
-    if 'user_role' not in session:
-        session['user_role'] = 'user'  
-    
-    page = int(request.args.get('page', 1))  
-    user_id = session.get('user_id') 
-    
-    vehicles = get_vehicles_for_page(page, user_id)
-    
+    vehicles = get_all_vehicles()
     if vehicles is None:
         flash("Failed to fetch vehicles.", "danger")
-        return render_template('vehicles.html', title='Vehicles', vehicles=[], page=page, user_role=session.get('user_role'))
+        return render_template('vehicles.html', title='Vehicles', vehicles=[])
     else:
-        return render_template('vehicles.html', title='Vehicles', vehicles=vehicles, page=page, user_role=session.get('user_role'))
+        return render_template('vehicles.html', title='Vehicles', vehicles=vehicles)
 
-def get_vehicles_for_page(page, user_id):
+def get_all_vehicles():
     try:
         connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
-        offset = (page - 1) * 10 
-        cursor.execute("SELECT * FROM vehicle WHERE userID = %s LIMIT 10 OFFSET %s", (user_id, offset))
+        cursor.execute("SELECT * FROM vehicle")
         vehicles = cursor.fetchall()
         return vehicles
     except mysql.connector.Error as err:
@@ -38,5 +31,3 @@ def get_vehicles_for_page(page, user_id):
         return None
     finally:
         close_db_connection(connection)
-
-

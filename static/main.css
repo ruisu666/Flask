@@ -134,10 +134,3 @@ body {
 .modal-backdrop {
   background-color: rgba(0, 0, 0, 0.5) !important;
 }
-
-
-.table-container {
-  height: 750px; /* Adjust the height as needed */
-  width: 100%; /* Adjust the width as needed */
-  overflow-y: auto; /* Enable vertical scrolling */
-}

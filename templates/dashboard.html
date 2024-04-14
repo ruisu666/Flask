@@ -170,9 +170,9 @@
         </script>
 
         {% elif user_role == 'user' %}
-            <div class="container user-dashboard" style="padding-top: 100px;">
+            <div class="container user-dashboard">
                 </br>
-                <!-- <h2 class="text-center">Hello {{ user_firstname }} !</h2> -->
+                <h2 class="text-center">Hello {{ user_firstname }} !</h2>
                 <div class="user-content">
                     <div class="row justify-content-center">
                         <!-- Introduction and Guidelines -->
@@ -193,23 +193,11 @@
                             <div class="qr-code-image" style="background-color: #002b80; padding: 10px; border-radius: 5px;">
                                 <h3 style="color: white;">QR Code</h3>
                                 <img src="data:image/png;base64,{{ qr_code_image }}" alt="QR Code" class="img-fluid">
-                            </br>          
                             </div>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-top: 10%;">
-                                    Choose QR
-                                </button>
-                                <div class="dropdown-menu" style="height: 120%; background-color: #007bff;">
-                                    <a class="dropdown-item text-white" href="#" style="background-color: #007bff;">Action 1</a>
-                                    <a class="dropdown-item text-white" href="#" style="background-color: #007bff;">Action 2</a>
-                                    <a class="dropdown-item text-white" href="#" style="background-color: #007bff;">Action 3</a>
-                                </div>
-                            </div>
-                            <a href="data:image/png;base64,{{ qr_code_image }}" download="qr_code_image.png" class="btn btn-primary" style="margin-top: 3%;">Download Image</a>
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#decodedDataModal"style="margin-top: 3%;">View Data</button>
                         </div>
-                        
-                    </div>                    
+                    </div>
+                    <!-- Legend line -->
+                    
                     <!-- Modal -->
                     <div class="modal fade" id="decodedDataModal" tabindex="-1" role="dialog" aria-labelledby="decodedDataModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -235,6 +223,15 @@
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Buttons Row -->
+                    <div class="row mt-3 justify-content-center">
+                        <div class="col-md-6 text-center">
+                            <a href="data:image/png;base64,{{ qr_code_image }}" download="qr_code_image.png" class="btn btn-primary">Download Image</a>
+                            <!-- Another Action Button -->
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#decodedDataModal">View Data</button>
                         </div>
                     </div>
                     <hr style="margin-top: 30px; margin-bottom: 30px; border-top: 1px solid #002b80;">
