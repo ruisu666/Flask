@@ -21,7 +21,6 @@ def users():
     try:
         cursor, connection = get_cursor()
         if cursor:
-            # Querying users with pagination
             sql = """
                 SELECT 
                     userinfo.studno, 
@@ -38,11 +37,11 @@ def users():
             cursor.execute(sql)
             users_info = cursor.fetchall()
 
-            # Additional print statements
+           
             print("Fetched users:", users_info)
             print("Users info before rendering template:", users_info)
 
-            # Count total users
+            
             cursor.execute("SELECT COUNT(*) FROM userinfo;")
             print("Executing count query: SELECT COUNT(*) FROM userinfo;")  
             total_users = cursor.fetchone()[0]

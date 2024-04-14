@@ -1,8 +1,6 @@
 User ID: 2
-Student Number: SUM2021-00366
-Lastname: Pelaez
-Firstname: Emanuel Luis
+Student Number: 20130513-023485
+Lastname: Dela Cruz
+Firstname: Juan
 Email: e.lu1s@yahoo.com
-Contact Number: 09764274590
-License Plate: SUS 0529
-Vehicle Model: Toyota Corolla
+Contact Number: 09672849927

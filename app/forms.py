@@ -163,5 +163,8 @@ class AdminRegistrationForm(FlaskForm):
         if result > 0:
             raise ValidationError('Email address is already in use. Please use a different email.')
 
-
+class AddVehicleForm(FlaskForm):
+    model = StringField('Model', validators=[DataRequired()])
+    license_plate = StringField('License Plate', validators=[DataRequired()])
+    submit = SubmitField('Submit')
         

@@ -271,8 +271,7 @@ def verify_user_email(token):
                 cursor.execute(sql_vehicle, (user_id, registration_data['licenseplate'], registration_data['model']))
                 connection.commit()
 
-                # Include userID in QR data
-                qr_data = f"User ID: {user_id}\nStudent Number: {registration_data['studno']}\nLastname: {registration_data['lastname']}\nFirstname: {registration_data['firstname']}\nEmail: {registration_data['email']}\nContact Number: {registration_data['contactnumber']}\nLicense Plate: {registration_data['licenseplate']}\nVehicle Model: {registration_data['model']}"
+                qr_data = f"User ID: {user_id}\nStudent Number: {registration_data['studno']}\nLastname: {registration_data['lastname']}\nFirstname: {registration_data['firstname']}\nEmail: {registration_data['email']}\nContact Number: {registration_data['contactnumber']}"
 
                 qr_image_str = generate_qr_code(qr_data)
 

@@ -30,14 +30,13 @@
         </div>        
         <form id="timeForm" method="post">
             <input type="hidden" id="qrDataInput" name="qrData">
-            <!-- Other form fields here -->
         </form>   
         <script>
             const qrCanvas = document.getElementById('qrCanvas');
             const scanButton = document.getElementById('scanButton');
-            let qrData = null; // Variable to store QR code data
+            let qrData = null; 
         
-            // Function to activate the camera and scan for QR codes
+
 async function scanQR() {
     try {
         // Access the rear camera
@@ -81,7 +80,6 @@ async function scanQR() {
         console.error('Error accessing camera:', error);
     }
 }
-
             // Event listener for the scan button
             scanButton.addEventListener('click', scanQR);
         
@@ -198,7 +196,7 @@ async function scanQR() {
                                 <img src="data:image/png;base64,{{ qr_code_image }}" alt="QR Code" class="img-fluid">
                             </br>          
                             </div>
-                            <div class="btn-group">
+                            <!-- <div class="btn-group">
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-top: 10%;">
                                     Choose QR
                                 </button>
@@ -207,7 +205,7 @@ async function scanQR() {
                                     <a class="dropdown-item text-white" href="#" style="background-color: #007bff;">Action 2</a>
                                     <a class="dropdown-item text-white" href="#" style="background-color: #007bff;">Action 3</a>
                                 </div>
-                            </div>
+                            </div> -->
                             <a href="data:image/png;base64,{{ qr_code_image }}" download="qr_code_image.png" class="btn btn-primary" style="margin-top: 3%;">Download Image</a>
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#decodedDataModal"style="margin-top: 3%;">View Data</button>
                         </div>
@@ -244,7 +242,7 @@ async function scanQR() {
                 </div>
             </div>
             <!-- Profile Personal Information -->
-            <div class="container profile-info mt-5 p-4 rounded">
+            <!-- <div class="container profile-info mt-5 p-4 rounded">
                 <h3 class="text-center mb-4">Profile Personal Information</h3>
                 <div class="row">
                     <div class="col-md-6">
@@ -273,11 +271,10 @@ async function scanQR() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <!-- Footing Content -->
             <div class="container footing-content mt-5">
-                <p class="text-center">&copy; 2024 University of NEUST. All rights reserved.</p>
-                <!-- Add your footing content here -->
+                <p class="text-center">&copy; Campus Watch: Vehicle Management System</p>
             </div>
         {% else %}
             <p class="text-center">Unknown user role</p>

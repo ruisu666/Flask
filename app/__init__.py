@@ -14,7 +14,7 @@ mail = Mail(app)
 
 app.config['SECRET_KEY'] = 'your_secret_key'
 
-# Comment out the blueprint registrations
+
 # from app.authConnector import auth_bp
 # from app.dashboardConnector import dashboard_bp
 # from app.logsConnector import logs_bp

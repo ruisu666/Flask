@@ -2,13 +2,39 @@
 
 {% block content %}
 
-<h1>Vehicles</h1>
+<!-- <h1>Vehicles</h1> -->
 
-<div class="container-fluid" style="padding-top: 70px;">
+<div class="container-fluid" style="padding-top: 150px;">
   <div class="row justify-content-center">
-    <div class="col-md-20 mb-4">
+    <div class="col-md-10 mb-4">
       <div class="input-group rounded">
         <input type="search" class="form-control rounded" id="searchInput" placeholder="Search..." aria-label="Search" aria-describedby="search-addon">
+        <button class="btn btn-primary" type="button" id="addVehicleButton" data-bs-toggle="modal" data-bs-target="#addVehicleModal">Add Vehicle</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addVehicleModal" tabindex="-1" aria-labelledby="addVehicleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addVehicleModalLabel">Add Vehicle</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{{ url_for('vehicles.add_vehicle') }}" method="post">
+          {{ form.csrf_token }}
+          <div class="mb-3">
+            {{ form.model.label(class="form-label") }}
+            {{ form.model(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.license_plate.label(class="form-label") }}
+            {{ form.license_plate(class="form-control") }}
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
       </div>
     </div>
   </div>

@@ -45,8 +45,6 @@ def time_out_instructions():
         print("Error:", e)
         return "Error processing request", 500
 
-
-
 def save_qr_data(qr_data):
     try:
         with open('qr_data.txt', 'w') as file:
@@ -101,7 +99,6 @@ def is_user_same_status(user_id, time_in):
         print("Error checking user status:", e)
     finally:
         close_db_connection(connection)
-
 
 def log_time_in(user_id, current_datetime):
     try:

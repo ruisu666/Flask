@@ -14,7 +14,7 @@ def logs():
         flash('You are not logged in.', 'danger')
         return redirect(url_for('auth.landing'))
     
-    page = request.args.get('page', 1, type=int)  # Get the page number from the query parameters
+    page = request.args.get('page', 1, type=int)  
 
     try:
         cursor, connection = get_cursor()

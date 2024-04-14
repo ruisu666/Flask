@@ -38,8 +38,8 @@ def dashboard():
 
             sql_get_vehicle_info = "SELECT * FROM vehicle WHERE userID = (SELECT userID FROM user WHERE infoID = %s)"
             cursor.execute(sql_get_vehicle_info, (info_id,))
-            vehicle_info = cursor.fetchone()
-            print("Vehicle Info:", vehicle_info) 
+            vehicle_info = cursor.fetchall() 
+            print("Vehicle Info:", vehicle_info)
 
             sql_get_qr_code = "SELECT qr_code_image FROM qr_codes WHERE userID = (SELECT userID FROM user WHERE infoID = %s)"
             cursor.execute(sql_get_qr_code, (info_id,))
