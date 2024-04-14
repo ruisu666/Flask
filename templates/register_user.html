@@ -1,0 +1,273 @@
+{% extends 'layout_forms.html' %}
+{% block content %}
+<div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="content-section" style="box-shadow: 0 0 10px rgba(0,0,0,0.2); padding: 20px; border-radius: 10px;">
+                    <img src="{{ url_for('static', filename='images/neust_logo.png') }}" alt="NEUST Logo" class="img-fluid mb-4 mx-auto d-block" style="width: 250px; height: auto;">
+                    <h2 class="text-center mb-4">Vehicle Management System</h2>
+                    <h3 class="text-center mb-4">User Registration</h3>
+                    <form id="registrationForm" method="POST" action="{{ url_for('auth.register_user') }}" novalidate>
+                        {{ form.hidden_tag() }}
+                        <legend class="border-bottom mb-4" style="text-align: center;"></legend>
+                        <div class="col-md-20">
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                <div class="alert-container">
+                                    {% for category, message in messages %}
+                                        {% if category == 'verification_success_message' %}
+                                            <div class="alert alert-success">
+                                                <div class="text-success">{{ message }}</div>
+                                                <a href="{{ url_for('auth.resend_user_verification_email') }}">Click here to resend</a>
+                                            </div>
+                                        {% elif category == 'success' %}
+                                            <div class="alert alert-success">{{ message }}</div>
+                                        {% elif category == 'danger' %}
+                                            <div class="alert alert-danger">{{ message }}</div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% endwith %}
+                        </div>
+                        <div class="form-group">
+                            
+                            {{ form.studno.label(class="form-control-label") }}
+                            {% if form.studno.errors %}
+                                {{ form.studno(class="form-control is-invalid", placeholder="Student Number (e.g. SUM2021-00366)") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.studno.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.studno(class="form-control", placeholder="Student Number (e.g. SUM2021-00366)") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                {{ form.firstname.label(class="form-control-label") }}
+                                {% if form.firstname.errors %}
+                                    {{ form.firstname(class="form-control is-invalid", placeholder="First Name (e.g. Juan)") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.firstname.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.firstname(class="form-control", placeholder="First Name (e.g. Juan)") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-md-6">
+                                {{ form.lastname.label(class="form-control-label") }}
+                                {% if form.lastname.errors %}
+                                    {{ form.lastname(class="form-control is-invalid", placeholder="Last Name (e.g. Dela Cruz)") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.lastname.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.lastname(class="form-control", placeholder="Last Name (e.g. Dela Cruz)") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ form.emailaddress.label(class="form-control-label") }}
+                            {% if form.emailaddress.errors %}
+                                {{ form.emailaddress(class="form-control is-invalid", placeholder="Email Address (e.g. juandelacruz@gmail.com)") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.emailaddress.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.emailaddress(class="form-control", placeholder="Email Address (e.g. juandelacruz@gmail.com)") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.confirm_email.label(class="form-control-label") }}
+                            {% if form.confirm_email.errors %}
+                                {{ form.confirm_email(class="form-control is-invalid", placeholder="Confirm Email Address (e.g. juandelacruz@gmail.com)") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.confirm_email.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.confirm_email(class="form-control", placeholder="Confirm Email Address (e.g. juandelacruz@gmail.com)") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            {{ form.contactnumber.label(class="form-control-label") }}
+                            {% if form.contactnumber.errors %}
+                                {{ form.contactnumber(class="form-control is-invalid", pattern="[0-9]+", placeholder="Contact Number (e.g. 09XXXXXXXXXX)") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.contactnumber.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.contactnumber(class="form-control", pattern="[0-9]+", placeholder="Contact Number (e.g. 09XXXXXXXXXX)") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                {{ form.vehicle_model.label(class="form-control-label") }}
+                                {% if form.vehicle_model.errors %}
+                                    {{ form.vehicle_model(class="form-control is-invalid", placeholder="Vehicle Model (e.g. Toyota Corolla)") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.vehicle_model.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.vehicle_model(class="form-control", placeholder="Vehicle Model (e.g. Toyota Corolla)") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-md-6">
+                                {{ form.license_number.label(class="form-control-label") }}
+                                {% if form.license_number.errors %}
+                                    {{ form.license_number(class="form-control is-invalid", placeholder="License Plate (e.g. ABC 1234)") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.license_number.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.license_number(class="form-control", placeholder="License Plate (e.g. ABC 1234)") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                {{ form.password.label(class="form-control-label") }}
+                                {% if form.password.errors %}
+                                    {{ form.password(class="form-control is-invalid", id="passwordInput", placeholder="Password") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.password.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="input-group">
+                                        {{ form.password(class="form-control", id="passwordInput", placeholder="Password") }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group col-md-6">
+                                {{ form.confirm_password.label(class="form-control-label") }}
+                                {% if form.confirm_password.errors %}
+                                    {{ form.confirm_password(class="form-control is-invalid", id="confirmPasswordInput", placeholder="Confirm Password") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.confirm_password.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="input-group">
+                                        {{ form.confirm_password(class="form-control", id="confirmPasswordInput", placeholder="Confirm Password") }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- Checkbox for showing password -->
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="togglePasswordCheckbox" onchange="togglePasswordVisibility()">
+                            <label class="form-check-label" for="togglePasswordCheckbox">Show Password</label>
+                        </div>
+                        <!-- Password strength meter -->
+                        <div class="form-group col-md-12" style="font-size: 15px;">
+                            <progress id="passwordStrength" class="form-control" max="5" value="0"></progress> <br>
+                            <ul>
+                                <li>Password must be at least 8 characters long</li>
+                                <li>Password must contain at least one digit.</li>
+                                <li>Password must contain at least one uppercase/lowercase letter.</li>
+                                <li>Password must contain at least one special character.</li>
+                            </ul> <br>
+                        </div>
+                        <div class="form-group">
+                            <div class="g-recaptcha" data-sitekey="6LfP-rUpAAAAAJTZx8j-nxKTUH18EfG3We5jW9T_"></div>
+                        </div>
+                        <button type="button" id="submitButton" class="btn btn-primary btn-block">Register</button>
+                    </form>     
+                    <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                <div class="text-center mt-3">
+                                    <legend class="border-bottom mb-4" style="text-align: center;"></legend>
+                                    <p>Already have an account? <a href="{{ url_for('auth.user_login') }}">Login</a></p>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+<script>
+        function togglePasswordVisibility() {
+            var passwordInput = document.getElementById("passwordInput");
+            var confirmPasswordInput = document.getElementById("confirmPasswordInput");
+            var x = document.getElementById("togglePasswordCheckbox");
+            if (x.checked) {
+                passwordInput.type = "text";
+                confirmPasswordInput.type = "text";
+            } else {
+                passwordInput.type = "password";
+                confirmPasswordInput.type = "password";
+            }
+        }
+
+        function checkPasswordStrength() {
+    var password = document.getElementById("passwordInput").value;
+    var strengthMeter = document.getElementById("passwordStrength");
+    var strength = 0;
+
+    // Check if password contains at least one digit
+    if (/\d/.test(password)) {
+        strength++;
+    }
+
+    // Check if password contains at least one uppercase letter
+    if (/[A-Z]/.test(password)) {
+        strength++;
+    }
+
+    // Check if password contains at least one lowercase letter
+    if (/[a-z]/.test(password)) {
+        strength++;
+    }
+
+    // Check if password contains at least one special character
+    if (/[^a-zA-Z0-9]/.test(password)) {
+        strength++;
+    }
+
+    // Max out the progress bar if all conditions are met
+    if (strength === 4) {
+        strengthMeter.value = 5; // Max value of the progress bar
+    } else {
+        strengthMeter.value = strength;
+    }
+}
+
+
+        // Add event listeners
+        document.getElementById("passwordInput").addEventListener("input", checkPasswordStrength);
+        document.getElementById("togglePasswordCheckbox").addEventListener("change", togglePasswordVisibility);
+        document.getElementById('submitButton').addEventListener('click', function() {
+            Swal.fire({
+                title: 'Confirm Registration',
+                text: 'Are you sure you want to submit the form?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Register!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('registrationForm').submit();
+                }
+            });
+        });
+        
+</script>
+{% endblock content %}
