@@ -1,4 +1,88 @@
-{% extends "layout.html" %}
+{% extends 'layout.html' %}
+
 {% block content %}
-    <h1>profile page</h1>
-{% endblock content%}
+
+<h1>Users</h1>
+
+<div class="container-fluid" style="padding-top: 70px;">
+  <div class="row justify-content-center">
+    <div class="col-md-20 mb-4">
+      <div class="input-group rounded">
+        <input type="search" class="form-control rounded" id="searchInput" placeholder="Search..." aria-label="Search" aria-describedby="search-addon">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-md-20">
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table custom-table" id="dataTable">
+            <thead class="thead-dark rounded-top">
+              <tr>
+                <th class="rounded-top-left">#</th>
+                <th>Student Number</th>
+                <th>Last Name</th>
+                <th>First Name</th>
+                <th>Email</th>
+                <th>Contact Number</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for user in users_info %}
+                <tr>
+                  <td>{{ loop.index + ((page - 1) * per_page) }}</td>
+                  <td>{{ user[0] }}</td> 
+                  <td>{{ user[1] }}</td> 
+                  <td>{{ user[2] }}</td> 
+                  <td>{{ user[3] }}</td>  
+                  <td>{{ user[4] }}</td>  
+                  <td></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+          </table>
+        </div>
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            {% for p in range(1, total_pages + 1) %}
+              <li class="page-item {% if p == page %}active{% endif %}"><a class="page-link" href="{{ url_for('users.users', page=p) }}">{{ p }}</a></li>
+            {% endfor %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.getElementById('searchInput').addEventListener('input', function() {
+      var filter, table, tr, td, i, txtValue;
+      filter = this.value.toUpperCase();
+      table = document.getElementById('dataTable');
+      tr = table.getElementsByTagName('tr');
+      for (i = 1; i < tr.length; i++) {
+        var found = false;
+        for (var j = 0; j < tr[i].cells.length; j++) {
+          td = tr[i].cells[j];
+          if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              found = true;
+              break; 
+            }
+          }
+        }
+        if (found) {
+          tr[i].style.display = '';
+        } else {
+          tr[i].style.display = 'none';
+        }
+      }
+    });
+</script>
+
+{% endblock %}
