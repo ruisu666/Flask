@@ -6,7 +6,7 @@
         {% if user_role == 'admin' %}
     </br></br></br></br></br>
         <div class="container">
-            <h2 class="text-center">Hello {{ admin_firstname }}!</h2>
+            <!-- <h2 class="text-center">Hello {{ admin_firstname }}!</h2> -->
             <div class="row justify-content-center">
                 <div class="col-9 text-center">
                     <img id="qrImage" src="{{ url_for('static', filename='images/qrScanner.jpg') }}" class="img-fluid" style="max-width: 100%;">
@@ -38,47 +38,50 @@
             let qrData = null; // Variable to store QR code data
         
             // Function to activate the camera and scan for QR codes
-            async function scanQR() {
-                try {
-                    // Access the camera
-                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    const qrVideo = document.getElementById('qrVideo');
-                    qrVideo.srcObject = stream;
-                    qrVideo.play();
-        
-                    // Toggle visibility of image and video elements
-                    const qrImage = document.getElementById('qrImage');
-                    qrImage.style.display = 'none';
-                    qrVideo.style.display = 'block';
-        
-                    // Wait for the video metadata to load
-                    qrVideo.addEventListener('loadedmetadata', function () {
-                        // Set up the canvas for capturing image data
-                        const context = qrCanvas.getContext('2d');
-                        qrCanvas.width = qrVideo.videoWidth;
-                        qrCanvas.height = qrVideo.videoHeight;
-        
-                        // Continuously capture video frames and attempt to decode QR code
-                        function captureFrame() {
-                            context.drawImage(qrVideo, 0, 0, qrCanvas.width, qrCanvas.height);
-                            const imageData = context.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
-                            const code = jsQR(imageData.data, imageData.width, imageData.height);
-                            if (code) {
-                                qrData = code.data; // Store QR code data
-                                // Decode QR code and display data
-                                displayQRData(qrData);
-                            }
-                            requestAnimationFrame(captureFrame);
-                        }
-        
-                        // Start capturing frames
-                        captureFrame();
-                    });
-                } catch (error) {
-                    console.error('Error accessing camera:', error);
+async function scanQR() {
+    try {
+        // Access the rear camera
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        const qrVideo = document.getElementById('qrVideo');
+        qrVideo.srcObject = stream;
+        qrVideo.play();
+
+        // Remove the playsinline attribute to prevent full screen mode
+        qrVideo.removeAttribute('playsinline');
+
+        // Toggle visibility of image and video elements
+        const qrImage = document.getElementById('qrImage');
+        qrImage.style.display = 'none';
+        qrVideo.style.display = 'block';
+
+        // Wait for the video metadata to load
+        qrVideo.addEventListener('loadedmetadata', function () {
+            // Set up the canvas for capturing image data
+            const context = qrCanvas.getContext('2d');
+            qrCanvas.width = qrVideo.videoWidth;
+            qrCanvas.height = qrVideo.videoHeight;
+
+            // Continuously capture video frames and attempt to decode QR code
+            function captureFrame() {
+                context.drawImage(qrVideo, 0, 0, qrCanvas.width, qrCanvas.height);
+                const imageData = context.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                if (code) {
+                    qrData = code.data; // Store QR code data
+                    // Decode QR code and display data
+                    displayQRData(qrData);
                 }
+                requestAnimationFrame(captureFrame);
             }
-        
+
+            // Start capturing frames
+            captureFrame();
+        });
+    } catch (error) {
+        console.error('Error accessing camera:', error);
+    }
+}
+
             // Event listener for the scan button
             scanButton.addEventListener('click', scanQR);
         

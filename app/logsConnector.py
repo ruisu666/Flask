@@ -51,8 +51,8 @@ def logs():
                         'firstname': log[1],
                         'lastname': log[2],
                         'contactnumber': log[3],
-                        'model': log[4],
-                        'licenseplate': log[5],
+                        # 'model': log[4],
+                        # 'licenseplate': log[5],
                         'time_in': log[6],
                         'time_out': log[7],
                     })

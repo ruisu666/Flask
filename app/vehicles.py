@@ -11,6 +11,7 @@ def vehicles():
     
     page = int(request.args.get('page', 1))  
     user_id = session.get('user_id') 
+    print(user_id)
     
     vehicles = get_vehicles_for_page(page, user_id)
     

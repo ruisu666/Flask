@@ -27,8 +27,8 @@
                 <th>Last Name</th>
                 <th>First Name</th>
                 <th>Contact Number</th>
-                <th>Vehicle Model</th>
-                <th>License Plate</th>
+                <!-- <th>Vehicle Model</th>
+                <th>License Plate</th> -->
                 <th>Time In</th>
                 <th>Time Out</th>
                 <th class="rounded-top-right">Actions</th>
@@ -44,8 +44,8 @@
                 <td>{{ log.lastname }}</td>
                 <td>{{ log.firstname }}</td>
                 <td>{{ log.contactnumber }}</td>
-                <td>{{ log.model }}</td>
-                <td>{{ log.licenseplate }}</td>
+                <!-- <td>{{ log.model }}</td>
+                <td>{{ log.licenseplate }}</td> -->
                 <td>{{ log.time_in.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                 <td>{{ log.time_out.strftime('%Y-%m-%d %H:%M:%S') if log.time_out else "" }}</td>
                 <td>
