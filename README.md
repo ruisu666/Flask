@@ -26,6 +26,8 @@ To run this program, you need to follow a set of requirements first;
 
    pip install pyOpenSSL
 
+   pip install "qrcode[pil]"
+
 
 
 
