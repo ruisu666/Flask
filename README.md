@@ -1,13 +1,11 @@
 # Vehicle Management System
 
-To run this program, you need to follow a set of requirements first;
-
-1. Install Python
+## To run this program, you need to follow a set of requirements first;
+### 1. Python
+### 2. XAMPP
+### 3. Any IDE or Text Editor (I use VS Code)
+### 4. pip requirements - run the following commands to your CMD:
    
-2. Any IDE or Text Editor (I use VS Code)
-
-3. pip requirement - run the following commands to your CMD:
-
     pip install flask
     
     pip install flask-wtf
@@ -22,11 +20,11 @@ To run this program, you need to follow a set of requirements first;
 
     pip install requests
 
-   pip install opencv-python pyzbar
+      pip install opencv-python pyzbar
 
-   pip install pyOpenSSL
+      pip install pyOpenSSL
 
-   pip install "qrcode[pil]"
+      pip install "qrcode[pil]"
 
 
 
