@@ -32,19 +32,11 @@
         ```bash
         python -m venv myenv
         ```
-      - On macOS/Linux:
-        ```bash
-        python3 -m venv myenv
-        ```
 
    3. **Activate the virtual environment**:
       - On Windows:
         ```bash
         myenv\Scripts\activate
-        ```
-      - On macOS/Linux:
-        ```bash
-        source myenv/bin/activate
         ```
 
    4. **Install the dependencies from `requirements.txt`**:
