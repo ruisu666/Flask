@@ -24,7 +24,7 @@
    #### Steps:
    1. **Navigate to the project folder**:
       ```bash
-      cd your-project-folder
+      cd vms
       ```
 
    2. **Create a virtual environment**:
