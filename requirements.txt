@@ -1,0 +1,11 @@
+flask
+flask-wtf
+email_validator
+mysql-connector-python
+Flask-Mail
+phonenumbers
+requests
+opencv-python
+pyzbar
+pyOpenSSL
+qrcode[pil]

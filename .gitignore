@@ -3,3 +3,16 @@ __pycache__
 *.pyc
 *.pyc
 __pycache__/app.cpython-311.pyc
+*.py[cod]
+
+env/
+venv/
+myenv/
+
+.ipynb_checkpoints/
+
+*.egg-info/
+dist/
+build/
+
+.vscode/
