@@ -53,11 +53,7 @@
       ```
 
    5. **Run the Flask app**:
-      - If your app is run via `flask`, you can start it with:
-        ```bash
-        flask run
-        ```
-      - Or, if your entry point is `app.py`:
+      - Run the application with:
         ```bash
         python app.py
         ```
